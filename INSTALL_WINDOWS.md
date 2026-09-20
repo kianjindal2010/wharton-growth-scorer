@@ -4,7 +4,6 @@
 
 - Windows 10 or 11
 - Python 3.11 or 3.12 from [python.org](https://www.python.org/downloads/)
-- Git from [git-scm.com](https://git-scm.com/download/win)
 - An internet connection when installing and when downloading market data
 
 During Python installation, select **Add Python to PATH**.
@@ -13,10 +12,10 @@ During Python installation, select **Add Python to PATH**.
 
 ### One-line PowerShell installation
 
-After the repository owner has added your GitHub account as a collaborator, paste this complete line into PowerShell:
+Paste this complete line into PowerShell. No GitHub account or Git installation is required:
 
 ```powershell
-$d="$env:LOCALAPPDATA\WhartonGrowthScorer"; if (Test-Path "$d\.git") { git -C $d pull } else { git clone https://github.com/kianjindal2010/wharton-growth-scorer.git $d }; powershell -NoProfile -ExecutionPolicy Bypass -File "$d\install.ps1"; $env:Path="$env:LOCALAPPDATA\Programs\WhartonGrowthScorer\bin;$env:Path"
+irm https://raw.githubusercontent.com/kianjindal2010/wharton-growth-scorer/main/bootstrap.ps1 | iex
 ```
 
 Then type:
@@ -25,7 +24,7 @@ Then type:
 wharton predict
 ```
 
-The same command can be used later to update and reinstall the model.
+The same command can be used later to download updates and reinstall the model.
 
 1. Open PowerShell.
 2. Download the shared ZIP from Google Drive, extract it, and open PowerShell in the extracted `Wharton_Growth_Scorer_v0.4.0` folder.

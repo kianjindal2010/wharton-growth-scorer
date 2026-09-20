@@ -6,10 +6,10 @@ A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve
 
 ### One-line PowerShell installation
 
-After you have access to the private repository, paste this entire line into PowerShell:
+Paste this entire line into PowerShell. No GitHub account or Git installation is required:
 
 ```powershell
-$d="$env:LOCALAPPDATA\WhartonGrowthScorer"; if (Test-Path "$d\.git") { git -C $d pull } else { git clone https://github.com/kianjindal2010/wharton-growth-scorer.git $d }; powershell -NoProfile -ExecutionPolicy Bypass -File "$d\install.ps1"; $env:Path="$env:LOCALAPPDATA\Programs\WhartonGrowthScorer\bin;$env:Path"
+irm https://raw.githubusercontent.com/kianjindal2010/wharton-growth-scorer/main/bootstrap.ps1 | iex
 ```
 
 Then run from any folder:
@@ -19,6 +19,7 @@ wharton predict
 ```
 
 Excel reports are stored permanently under `Documents\Wharton Growth Scorer\output\scores\YYYY-MM-DD\`.
+The same installer command can be used later to download updates and reinstall the model.
 
 ### Manual developer installation
 
