@@ -1,0 +1,296 @@
+general:
+  - {pillar: Quality, metric: roic, label: ROIC, weight: 10, unit: "%", anchors: [0.00, 0.10, 0.25]}
+  - {pillar: Quality, metric: fcf_margin, label: Free-cash-flow margin, weight: 6, unit: "%", anchors: [0.00, 0.10, 0.25]}
+  - {pillar: Quality, metric: cash_conversion, label: Cash conversion, weight: 5, unit: "x", anchors: [0.50, 1.00, 1.50]}
+  - {pillar: Quality, metric: operating_margin_stability, label: Operating-margin variability, weight: 4, unit: "% stdev", anchors: [0.15, 0.07, 0.02]}
+  - {pillar: Growth, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 10, unit: "%", anchors: [0.00, 0.08, 0.20]}
+  - {pillar: Growth, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 7, unit: "%", anchors: [-0.05, 0.08, 0.20]}
+  - {pillar: Growth, metric: fcf_cagr_3y, label: Three-year FCF CAGR, weight: 5, unit: "%", anchors: [-0.05, 0.08, 0.20]}
+  - {pillar: Growth, metric: latest_revenue_growth, label: Latest revenue growth, weight: 3, unit: "%", anchors: [-0.10, 0.05, 0.20]}
+  - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 8, unit: "%", anchors: [0.00, 0.04, 0.08]}
+  - {pillar: Valuation, metric: ebit_ev, label: EBIT / enterprise value, weight: 6, unit: "%", anchors: [0.00, 0.05, 0.10]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 4, unit: "%", anchors: [0.00, 0.04, 0.08]}
+  - {pillar: Valuation, metric: shareholder_yield, label: Shareholder yield, weight: 2, unit: "%", anchors: [-0.05, 0.02, 0.06]}
+  - {pillar: Financial strength, metric: net_debt_ebitda, label: Net debt / EBITDA, weight: 6, unit: "x", anchors: [6.00, 2.00, 0.00]}
+  - {pillar: Financial strength, metric: interest_coverage, label: Interest coverage, weight: 5, unit: "x", anchors: [1.00, 5.00, 15.00]}
+  - {pillar: Financial strength, metric: current_ratio, label: Current ratio, weight: 2, unit: "x", anchors: [0.70, 1.50, 2.50]}
+  - {pillar: Financial strength, metric: cash_to_debt, label: Cash / debt, weight: 2, unit: "x", anchors: [0.00, 0.30, 1.00]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.60, 0.30, 0.15]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.70, -0.40, -0.20]}
+  - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.15, 0.00, 0.15]}
+
+bank:
+  - {pillar: Profitability, metric: roe, label: Return on equity, weight: 10, unit: "%", anchors: [0.00, 0.10, 0.20]}
+  - {pillar: Profitability, metric: roa, label: Return on assets, weight: 7, unit: "%", anchors: [0.00, 0.01, 0.02]}
+  - {pillar: Profitability, metric: efficiency_ratio, label: Efficiency ratio, weight: 8, unit: "%", anchors: [0.80, 0.60, 0.40]}
+  - {pillar: Growth, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 8, unit: "%", anchors: [-0.05, 0.08, 0.20]}
+  - {pillar: Growth, metric: tangible_book_cagr_3y, label: Tangible-book CAGR, weight: 7, unit: "%", anchors: [-0.05, 0.06, 0.15]}
+  - {pillar: Growth, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 5, unit: "%", anchors: [0.00, 0.08, 0.20]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 8, unit: "%", anchors: [0.00, 0.04, 0.08]}
+  - {pillar: Valuation, metric: price_to_tangible_book, label: Price / tangible book, weight: 8, unit: "x", anchors: [3.00, 1.50, 0.80]}
+  - {pillar: Valuation, metric: dividend_yield, label: Dividend yield, weight: 4, unit: "%", anchors: [0.00, 0.02, 0.05]}
+  - {pillar: Capital and asset quality, metric: cet1_buffer, label: CET1 buffer above minimum, weight: 8, unit: "% pts", anchors: [0.00, 0.03, 0.07]}
+  - {pillar: Capital and asset quality, metric: npl_ratio, label: Non-performing-loan ratio, weight: 6, unit: "%", anchors: [0.05, 0.02, 0.005]}
+  - {pillar: Capital and asset quality, metric: loan_loss_coverage, label: Loan-loss coverage, weight: 3, unit: "x", anchors: [0.50, 1.00, 1.80]}
+  - {pillar: Capital and asset quality, metric: loan_to_deposit, label: Loan / deposit, weight: 3, unit: "x", anchors: [1.20, 0.90, 0.70]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.60, 0.30, 0.15]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.70, -0.40, -0.20]}
+  - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.15, 0.00, 0.15]}
+
+insurer:
+  - {pillar: Profitability, metric: roe, label: Return on equity, weight: 10, unit: "%", anchors: [0.00, 0.10, 0.20]}
+  - {pillar: Profitability, metric: combined_ratio, label: Combined ratio, weight: 10, unit: "%", anchors: [1.05, 0.95, 0.85]}
+  - {pillar: Profitability, metric: investment_income_stability, label: Investment-income variability, weight: 5, unit: "% stdev", anchors: [0.50, 0.20, 0.05]}
+  - {pillar: Growth, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 8, unit: "%", anchors: [-0.05, 0.08, 0.20]}
+  - {pillar: Growth, metric: book_value_cagr_3y, label: Book-value CAGR, weight: 7, unit: "%", anchors: [-0.05, 0.06, 0.15]}
+  - {pillar: Growth, metric: premium_growth, label: Premium growth, weight: 5, unit: "%", anchors: [0.00, 0.06, 0.15]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 8, unit: "%", anchors: [0.00, 0.04, 0.08]}
+  - {pillar: Valuation, metric: price_to_book, label: Price / book, weight: 8, unit: "x", anchors: [3.00, 1.50, 0.80]}
+  - {pillar: Valuation, metric: dividend_yield, label: Dividend yield, weight: 4, unit: "%", anchors: [0.00, 0.02, 0.05]}
+  - {pillar: Solvency, metric: solvency_buffer, label: Solvency buffer above minimum, weight: 10, unit: "% pts", anchors: [0.00, 0.03, 0.07]}
+  - {pillar: Solvency, metric: debt_to_equity, label: Debt / equity, weight: 5, unit: "x", anchors: [1.00, 0.50, 0.20]}
+  - {pillar: Solvency, metric: reserve_coverage, label: Reserve coverage, weight: 5, unit: "x", anchors: [0.90, 1.10, 1.30]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.60, 0.30, 0.15]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.70, -0.40, -0.20]}
+  - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.15, 0.00, 0.15]}
+
+biotech:
+  - {pillar: Cash runway, metric: cash_runway_months, label: Cash runway, weight: 30, unit: "months", anchors: [6.00, 18.00, 36.00]}
+  - {pillar: Dilution risk, metric: share_count_cagr, label: Share-count CAGR, weight: 10, unit: "%", anchors: [0.25, 0.10, 0.00]}
+  - {pillar: Dilution risk, metric: cash_burn_to_market_cap, label: Cash burn / market cap, weight: 10, unit: "%", anchors: [0.50, 0.20, 0.05]}
+  - {pillar: R&D commitment, metric: rd_to_opex, label: R&D / operating expense, weight: 8, unit: "%", anchors: [0.20, 0.50, 0.80]}
+  - {pillar: R&D commitment, metric: rd_growth, label: R&D growth, weight: 7, unit: "%", anchors: [-0.05, 0.08, 0.20]}
+  - {pillar: Funding strength, metric: debt_to_cash, label: Debt / cash, weight: 8, unit: "x", anchors: [1.00, 0.30, 0.00]}
+  - {pillar: Funding strength, metric: current_ratio, label: Current ratio, weight: 7, unit: "x", anchors: [0.80, 2.00, 5.00]}
+  - {pillar: Valuation, metric: ev_to_rd, label: Enterprise value / R&D, weight: 10, unit: "x", anchors: [10.00, 5.00, 2.00]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 3, unit: "%", anchors: [0.90, 0.50, 0.25]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 2, unit: "%", anchors: [-0.85, -0.55, -0.30]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.30, 0.00, 0.30]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+
+semiconductor:
+  - {pillar: Quality, metric: roic, label: ROIC, weight: 6, unit: "%", anchors: [0.00, 0.10, 0.25]}
+  - {pillar: Quality, metric: gross_margin, label: Gross margin, weight: 5, unit: "%", anchors: [0.15, 0.35, 0.60]}
+  - {pillar: Quality, metric: fcf_margin, label: Free-cash-flow margin, weight: 4, unit: "%", anchors: [0.00, 0.10, 0.25]}
+  - {pillar: Quality, metric: cash_conversion, label: Cash conversion, weight: 3, unit: "x", anchors: [0.50, 1.00, 1.50]}
+  - {pillar: Quality, metric: operating_margin, label: Operating margin, weight: 3, unit: "%", anchors: [-0.05, 0.15, 0.35]}
+  - {pillar: Quality, metric: operating_margin_stability, label: Operating-margin variability, weight: 4, unit: "% stdev", anchors: [0.15, 0.07, 0.02]}
+  - {pillar: Growth and cycle, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 6, unit: "%", anchors: [-0.05, 0.08, 0.25]}
+  - {pillar: Growth and cycle, metric: latest_revenue_growth, label: Latest revenue growth, weight: 4, unit: "%", anchors: [-0.20, 0.08, 0.30]}
+  - {pillar: Growth and cycle, metric: revenue_acceleration, label: Revenue-growth acceleration, weight: 4, unit: "% pts", anchors: [-0.15, 0.00, 0.15]}
+  - {pillar: Growth and cycle, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 4, unit: "%", anchors: [-0.10, 0.08, 0.25]}
+  - {pillar: Growth and cycle, metric: fcf_cagr_3y, label: Three-year FCF CAGR, weight: 3, unit: "%", anchors: [-0.10, 0.08, 0.25]}
+  - {pillar: Growth and cycle, metric: gross_margin_trend, label: Gross-margin change, weight: 2, unit: "% pts", anchors: [-0.05, 0.00, 0.05]}
+  - {pillar: Growth and cycle, metric: inventory_days_change, label: Inventory-days change, weight: 2, unit: "days", anchors: [30.00, 0.00, -20.00]}
+  - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 5, unit: "%", anchors: [0.00, 0.04, 0.08]}
+  - {pillar: Valuation, metric: ebit_ev, label: EBIT / enterprise value, weight: 4, unit: "%", anchors: [0.00, 0.05, 0.10]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 3, unit: "%", anchors: [0.00, 0.04, 0.08]}
+  - {pillar: Valuation, metric: price_to_sales, label: Price / sales, weight: 2, unit: "x", anchors: [15.00, 5.00, 2.00]}
+  - {pillar: Valuation, metric: shareholder_yield, label: Shareholder yield, weight: 1, unit: "%", anchors: [-0.05, 0.02, 0.06]}
+  - {pillar: Balance sheet, metric: net_debt_ebitda, label: Net debt / EBITDA, weight: 5, unit: "x", anchors: [6.00, 2.00, 0.00]}
+  - {pillar: Balance sheet, metric: interest_coverage, label: Interest coverage, weight: 4, unit: "x", anchors: [1.00, 5.00, 15.00]}
+  - {pillar: Balance sheet, metric: current_ratio, label: Current ratio, weight: 2, unit: "x", anchors: [0.70, 1.50, 2.50]}
+  - {pillar: Balance sheet, metric: cash_to_debt, label: Cash / debt, weight: 2, unit: "x", anchors: [0.00, 0.30, 1.00]}
+  - {pillar: Balance sheet, metric: inventory_to_current_assets, label: Inventory / current assets, weight: 2, unit: "%", anchors: [0.60, 0.30, 0.10]}
+  - {pillar: Innovation and reinvestment, metric: rd_to_revenue, label: R&D / revenue, weight: 4, unit: "%", anchors: [0.01, 0.07, 0.15]}
+  - {pillar: Innovation and reinvestment, metric: revenue_growth_to_capex, label: Revenue growth / capex intensity, weight: 3, unit: "x", anchors: [-0.50, 0.50, 1.50]}
+  - {pillar: Innovation and reinvestment, metric: incremental_roic, label: Incremental ROIC, weight: 3, unit: "%", anchors: [0.00, 0.10, 0.30]}
+  - {pillar: Risk and momentum, metric: usd_volatility, label: Annualized USD volatility, weight: 2, unit: "%", anchors: [0.70, 0.35, 0.18]}
+  - {pillar: Risk and momentum, metric: max_drawdown, label: Maximum drawdown, weight: 2, unit: "%", anchors: [-0.75, -0.45, -0.25]}
+  - {pillar: Risk and momentum, metric: downside_beta, label: Downside beta, weight: 1, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Risk and momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 2, unit: "%", anchors: [-0.25, 0.00, 0.25]}
+  - {pillar: Risk and momentum, metric: relative_return_6m, label: Six-month relative return, weight: 1, unit: "%", anchors: [-0.18, 0.00, 0.18]}
+  - {pillar: Risk and momentum, metric: relative_return_3m, label: Three-month relative return, weight: 1, unit: "%", anchors: [-0.12, 0.00, 0.12]}
+  - {pillar: Risk and momentum, metric: relative_momentum_12_1, label: Twelve-to-one-month relative momentum, weight: 1, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+
+memory_semiconductor:
+  - {pillar: Quality, metric: gross_margin, label: Gross margin, weight: 4, unit: "%", anchors: [0.10, 0.30, 0.55]}
+  - {pillar: Quality, metric: operating_margin, label: Operating margin, weight: 3, unit: "%", anchors: [-0.15, 0.10, 0.30]}
+  - {pillar: Quality, metric: fcf_margin, label: Free-cash-flow margin, weight: 3, unit: "%", anchors: [-0.10, 0.08, 0.22]}
+  - {pillar: Quality, metric: cash_conversion, label: Cash conversion, weight: 2, unit: "x", anchors: [0.30, 1.00, 1.50]}
+  - {pillar: Quality, metric: operating_margin_stability, label: Operating-margin variability, weight: 3, unit: "% stdev", anchors: [0.25, 0.10, 0.04]}
+  - {pillar: Cycle and earnings inflection, metric: latest_revenue_growth, label: Latest revenue growth, weight: 5, unit: "%", anchors: [-0.20, 0.10, 0.40]}
+  - {pillar: Cycle and earnings inflection, metric: revenue_acceleration, label: Revenue-growth acceleration, weight: 5, unit: "% pts", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Cycle and earnings inflection, metric: gross_margin_trend, label: Gross-margin change, weight: 5, unit: "% pts", anchors: [-0.08, 0.00, 0.08]}
+  - {pillar: Cycle and earnings inflection, metric: inventory_days_change, label: Inventory-days change, weight: 4, unit: "days", anchors: [40.00, 0.00, -25.00]}
+  - {pillar: Cycle and earnings inflection, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 3, unit: "%", anchors: [-0.10, 0.05, 0.20]}
+  - {pillar: Cycle and earnings inflection, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 3, unit: "%", anchors: [-0.20, 0.05, 0.25]}
+  - {pillar: Memory market cycle, metric: memory_contract_price_growth, label: Forecast DRAM contract-price growth, weight: 20, unit: "% QoQ", anchors: [-0.20, 0.00, 0.50]}
+  - {pillar: Valuation, metric: price_to_sales, label: Price / sales, weight: 4, unit: "x", anchors: [12.00, 4.00, 1.50]}
+  - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 2, unit: "%", anchors: [0.00, 0.04, 0.10]}
+  - {pillar: Valuation, metric: ebit_ev, label: EBIT / enterprise value, weight: 2, unit: "%", anchors: [0.00, 0.05, 0.12]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 2, unit: "%", anchors: [0.00, 0.04, 0.10]}
+  - {pillar: Balance sheet, metric: net_debt_ebitda, label: Net debt / EBITDA, weight: 3, unit: "x", anchors: [6.00, 2.00, 0.00]}
+  - {pillar: Balance sheet, metric: cash_to_debt, label: Cash / debt, weight: 3, unit: "x", anchors: [0.00, 0.40, 1.00]}
+  - {pillar: Balance sheet, metric: current_ratio, label: Current ratio, weight: 2, unit: "x", anchors: [0.70, 1.50, 2.50]}
+  - {pillar: Balance sheet, metric: interest_coverage, label: Interest coverage, weight: 2, unit: "x", anchors: [1.00, 5.00, 15.00]}
+  - {pillar: Innovation, metric: rd_to_revenue, label: R&D / revenue, weight: 3, unit: "%", anchors: [0.01, 0.07, 0.15]}
+  - {pillar: Innovation, metric: revenue_growth_to_capex, label: Revenue growth / capex intensity, weight: 2, unit: "x", anchors: [-0.50, 0.50, 2.00]}
+  - {pillar: Risk and momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 4, unit: "%", anchors: [-0.30, 0.00, 0.30]}
+  - {pillar: Risk and momentum, metric: relative_return_6m, label: Six-month relative return, weight: 3, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Risk and momentum, metric: relative_return_3m, label: Three-month relative return, weight: 3, unit: "%", anchors: [-0.15, 0.00, 0.15]}
+  - {pillar: Risk and momentum, metric: relative_momentum_12_1, label: Twelve-to-one-month relative momentum, weight: 3, unit: "%", anchors: [-0.25, 0.00, 0.25]}
+  - {pillar: Risk and momentum, metric: usd_volatility, label: Annualized USD volatility, weight: 1, unit: "%", anchors: [0.80, 0.45, 0.25]}
+  - {pillar: Risk and momentum, metric: max_drawdown, label: Maximum drawdown, weight: 1, unit: "%", anchors: [-0.85, -0.55, -0.30]}
+
+technology:
+  - {pillar: Quality, metric: roic, label: ROIC, weight: 7, unit: "%", anchors: [0.00, 0.10, 0.25]}
+  - {pillar: Quality, metric: gross_margin, label: Gross margin, weight: 5, unit: "%", anchors: [0.20, 0.45, 0.70]}
+  - {pillar: Quality, metric: fcf_margin, label: Free-cash-flow margin, weight: 6, unit: "%", anchors: [0.00, 0.12, 0.30]}
+  - {pillar: Quality, metric: cash_conversion, label: Cash conversion, weight: 3, unit: "x", anchors: [0.50, 1.00, 1.50]}
+  - {pillar: Quality, metric: operating_margin_stability, label: Operating-margin variability, weight: 4, unit: "% stdev", anchors: [0.15, 0.07, 0.02]}
+  - {pillar: Growth and innovation, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 8, unit: "%", anchors: [0.00, 0.10, 0.25]}
+  - {pillar: Growth and innovation, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 5, unit: "%", anchors: [-0.05, 0.10, 0.25]}
+  - {pillar: Growth and innovation, metric: fcf_cagr_3y, label: Three-year FCF CAGR, weight: 4, unit: "%", anchors: [-0.05, 0.10, 0.25]}
+  - {pillar: Growth and innovation, metric: latest_revenue_growth, label: Latest revenue growth, weight: 4, unit: "%", anchors: [-0.10, 0.08, 0.25]}
+  - {pillar: Growth and innovation, metric: rd_to_revenue, label: R&D / revenue, weight: 4, unit: "%", anchors: [0.01, 0.08, 0.20]}
+  - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 8, unit: "%", anchors: [0.00, 0.04, 0.09]}
+  - {pillar: Valuation, metric: ebit_ev, label: EBIT / enterprise value, weight: 5, unit: "%", anchors: [0.00, 0.05, 0.11]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 4, unit: "%", anchors: [0.00, 0.04, 0.09]}
+  - {pillar: Valuation, metric: price_to_sales, label: Price / sales, weight: 3, unit: "x", anchors: [15.00, 6.00, 2.00]}
+  - {pillar: Financial strength, metric: net_debt_ebitda, label: Net debt / EBITDA, weight: 6, unit: "x", anchors: [6.00, 2.00, 0.00]}
+  - {pillar: Financial strength, metric: interest_coverage, label: Interest coverage, weight: 4, unit: "x", anchors: [1.00, 5.00, 15.00]}
+  - {pillar: Financial strength, metric: current_ratio, label: Current ratio, weight: 2, unit: "x", anchors: [0.70, 1.50, 2.50]}
+  - {pillar: Financial strength, metric: cash_to_debt, label: Cash / debt, weight: 3, unit: "x", anchors: [0.00, 0.40, 1.00]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.65, 0.32, 0.16]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.75, -0.42, -0.20]}
+  - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.15, 0.00, 0.15]}
+
+healthcare:
+  - {pillar: Quality, metric: roic, label: ROIC, weight: 7, unit: "%", anchors: [0.00, 0.10, 0.25]}
+  - {pillar: Quality, metric: gross_margin, label: Gross margin, weight: 5, unit: "%", anchors: [0.20, 0.50, 0.75]}
+  - {pillar: Quality, metric: fcf_margin, label: Free-cash-flow margin, weight: 6, unit: "%", anchors: [0.00, 0.12, 0.28]}
+  - {pillar: Quality, metric: cash_conversion, label: Cash conversion, weight: 3, unit: "x", anchors: [0.50, 1.00, 1.50]}
+  - {pillar: Quality, metric: operating_margin, label: Operating margin, weight: 4, unit: "%", anchors: [0.00, 0.15, 0.30]}
+  - {pillar: Growth, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 7, unit: "%", anchors: [0.00, 0.08, 0.20]}
+  - {pillar: Growth, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 5, unit: "%", anchors: [-0.05, 0.08, 0.20]}
+  - {pillar: Growth, metric: fcf_cagr_3y, label: Three-year FCF CAGR, weight: 4, unit: "%", anchors: [-0.05, 0.08, 0.20]}
+  - {pillar: Growth, metric: latest_revenue_growth, label: Latest revenue growth, weight: 4, unit: "%", anchors: [-0.10, 0.06, 0.18]}
+  - {pillar: Innovation, metric: rd_to_revenue, label: R&D / revenue, weight: 6, unit: "%", anchors: [0.00, 0.10, 0.25]}
+  - {pillar: Innovation, metric: rd_growth, label: R&D growth, weight: 4, unit: "%", anchors: [-0.10, 0.08, 0.22]}
+  - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 6, unit: "%", anchors: [0.00, 0.04, 0.08]}
+  - {pillar: Valuation, metric: ebit_ev, label: EBIT / enterprise value, weight: 4, unit: "%", anchors: [0.00, 0.05, 0.10]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 3, unit: "%", anchors: [0.00, 0.04, 0.08]}
+  - {pillar: Valuation, metric: price_to_sales, label: Price / sales, weight: 2, unit: "x", anchors: [12.00, 5.00, 2.00]}
+  - {pillar: Financial strength, metric: net_debt_ebitda, label: Net debt / EBITDA, weight: 5, unit: "x", anchors: [6.00, 2.00, 0.00]}
+  - {pillar: Financial strength, metric: interest_coverage, label: Interest coverage, weight: 4, unit: "x", anchors: [1.00, 5.00, 15.00]}
+  - {pillar: Financial strength, metric: current_ratio, label: Current ratio, weight: 3, unit: "x", anchors: [0.70, 1.50, 2.50]}
+  - {pillar: Financial strength, metric: cash_to_debt, label: Cash / debt, weight: 3, unit: "x", anchors: [0.00, 0.40, 1.00]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.60, 0.30, 0.15]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.70, -0.40, -0.20]}
+  - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.15, 0.00, 0.15]}
+
+financial_platform:
+  - {pillar: Profitability, metric: roe, label: Return on equity, weight: 8, unit: "%", anchors: [0.00, 0.12, 0.25]}
+  - {pillar: Profitability, metric: roa, label: Return on assets, weight: 4, unit: "%", anchors: [0.00, 0.04, 0.10]}
+  - {pillar: Profitability, metric: operating_margin, label: Operating margin, weight: 5, unit: "%", anchors: [0.00, 0.20, 0.45]}
+  - {pillar: Profitability, metric: fcf_margin, label: Free-cash-flow margin, weight: 4, unit: "%", anchors: [0.00, 0.15, 0.35]}
+  - {pillar: Profitability, metric: cash_conversion, label: Cash conversion, weight: 4, unit: "x", anchors: [0.50, 1.00, 1.50]}
+  - {pillar: Growth, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 7, unit: "%", anchors: [0.00, 0.08, 0.20]}
+  - {pillar: Growth, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 7, unit: "%", anchors: [-0.05, 0.08, 0.20]}
+  - {pillar: Growth, metric: fcf_cagr_3y, label: Three-year FCF CAGR, weight: 3, unit: "%", anchors: [-0.05, 0.08, 0.20]}
+  - {pillar: Growth, metric: latest_revenue_growth, label: Latest revenue growth, weight: 3, unit: "%", anchors: [-0.10, 0.06, 0.18]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 8, unit: "%", anchors: [0.00, 0.04, 0.09]}
+  - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 7, unit: "%", anchors: [0.00, 0.04, 0.09]}
+  - {pillar: Valuation, metric: price_to_book, label: Price / book, weight: 5, unit: "x", anchors: [5.00, 2.50, 1.00]}
+  - {pillar: Valuation, metric: shareholder_yield, label: Shareholder yield, weight: 5, unit: "%", anchors: [-0.05, 0.02, 0.07]}
+  - {pillar: Financial strength, metric: debt_to_equity, label: Debt / equity, weight: 5, unit: "x", anchors: [2.00, 0.80, 0.20]}
+  - {pillar: Financial strength, metric: interest_coverage, label: Interest coverage, weight: 4, unit: "x", anchors: [1.00, 5.00, 15.00]}
+  - {pillar: Financial strength, metric: current_ratio, label: Current ratio, weight: 3, unit: "x", anchors: [0.70, 1.50, 2.50]}
+  - {pillar: Financial strength, metric: cash_to_debt, label: Cash / debt, weight: 3, unit: "x", anchors: [0.00, 0.40, 1.00]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.60, 0.30, 0.15]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.70, -0.40, -0.20]}
+  - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.15, 0.00, 0.15]}
+
+industrial:
+  - {pillar: Quality, metric: roic, label: ROIC, weight: 8, unit: "%", anchors: [0.00, 0.10, 0.22]}
+  - {pillar: Quality, metric: fcf_margin, label: Free-cash-flow margin, weight: 6, unit: "%", anchors: [0.00, 0.08, 0.18]}
+  - {pillar: Quality, metric: cash_conversion, label: Cash conversion, weight: 5, unit: "x", anchors: [0.50, 1.00, 1.50]}
+  - {pillar: Quality, metric: operating_margin, label: Operating margin, weight: 3, unit: "%", anchors: [0.00, 0.12, 0.25]}
+  - {pillar: Quality, metric: operating_margin_stability, label: Operating-margin variability, weight: 3, unit: "% stdev", anchors: [0.15, 0.07, 0.02]}
+  - {pillar: Growth, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 8, unit: "%", anchors: [-0.03, 0.06, 0.15]}
+  - {pillar: Growth, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 5, unit: "%", anchors: [-0.05, 0.08, 0.18]}
+  - {pillar: Growth, metric: fcf_cagr_3y, label: Three-year FCF CAGR, weight: 4, unit: "%", anchors: [-0.05, 0.08, 0.18]}
+  - {pillar: Growth, metric: latest_revenue_growth, label: Latest revenue growth, weight: 3, unit: "%", anchors: [-0.10, 0.05, 0.15]}
+  - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 6, unit: "%", anchors: [0.00, 0.05, 0.10]}
+  - {pillar: Valuation, metric: ebit_ev, label: EBIT / enterprise value, weight: 4, unit: "%", anchors: [0.00, 0.06, 0.12]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 3, unit: "%", anchors: [0.00, 0.05, 0.10]}
+  - {pillar: Valuation, metric: shareholder_yield, label: Shareholder yield, weight: 2, unit: "%", anchors: [-0.05, 0.02, 0.07]}
+  - {pillar: Financial strength, metric: net_debt_ebitda, label: Net debt / EBITDA, weight: 6, unit: "x", anchors: [6.00, 2.00, 0.00]}
+  - {pillar: Financial strength, metric: interest_coverage, label: Interest coverage, weight: 5, unit: "x", anchors: [1.00, 5.00, 15.00]}
+  - {pillar: Financial strength, metric: current_ratio, label: Current ratio, weight: 2, unit: "x", anchors: [0.70, 1.50, 2.50]}
+  - {pillar: Financial strength, metric: cash_to_debt, label: Cash / debt, weight: 2, unit: "x", anchors: [0.00, 0.30, 1.00]}
+  - {pillar: Capital cycle, metric: asset_turnover, label: Asset turnover, weight: 4, unit: "x", anchors: [0.30, 0.80, 1.50]}
+  - {pillar: Capital cycle, metric: capex_to_sales, label: Capex / sales, weight: 3, unit: "%", anchors: [0.25, 0.10, 0.04]}
+  - {pillar: Capital cycle, metric: inventory_days_change, label: Inventory-days change, weight: 3, unit: "days", anchors: [30.00, 0.00, -20.00]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.60, 0.30, 0.15]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.70, -0.40, -0.20]}
+  - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.15, 0.00, 0.15]}
+
+consumer:
+  - {pillar: Brand and operating quality, metric: roic, label: ROIC, weight: 7, unit: "%", anchors: [0.00, 0.10, 0.25]}
+  - {pillar: Brand and operating quality, metric: gross_margin, label: Gross margin, weight: 5, unit: "%", anchors: [0.15, 0.40, 0.65]}
+  - {pillar: Brand and operating quality, metric: operating_margin, label: Operating margin, weight: 5, unit: "%", anchors: [0.00, 0.12, 0.25]}
+  - {pillar: Brand and operating quality, metric: fcf_margin, label: Free-cash-flow margin, weight: 5, unit: "%", anchors: [0.00, 0.10, 0.22]}
+  - {pillar: Brand and operating quality, metric: cash_conversion, label: Cash conversion, weight: 3, unit: "x", anchors: [0.50, 1.00, 1.50]}
+  - {pillar: Growth, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 7, unit: "%", anchors: [-0.03, 0.06, 0.15]}
+  - {pillar: Growth, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 6, unit: "%", anchors: [-0.05, 0.08, 0.18]}
+  - {pillar: Growth, metric: fcf_cagr_3y, label: Three-year FCF CAGR, weight: 4, unit: "%", anchors: [-0.05, 0.08, 0.18]}
+  - {pillar: Growth, metric: latest_revenue_growth, label: Latest revenue growth, weight: 3, unit: "%", anchors: [-0.10, 0.05, 0.15]}
+  - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 7, unit: "%", anchors: [0.00, 0.05, 0.10]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 5, unit: "%", anchors: [0.00, 0.05, 0.10]}
+  - {pillar: Valuation, metric: ebit_ev, label: EBIT / enterprise value, weight: 4, unit: "%", anchors: [0.00, 0.06, 0.12]}
+  - {pillar: Valuation, metric: shareholder_yield, label: Shareholder yield, weight: 2, unit: "%", anchors: [-0.05, 0.02, 0.07]}
+  - {pillar: Valuation, metric: price_to_sales, label: Price / sales, weight: 2, unit: "x", anchors: [8.00, 3.00, 1.00]}
+  - {pillar: Financial strength, metric: net_debt_ebitda, label: Net debt / EBITDA, weight: 4, unit: "x", anchors: [6.00, 2.00, 0.00]}
+  - {pillar: Financial strength, metric: interest_coverage, label: Interest coverage, weight: 3, unit: "x", anchors: [1.00, 5.00, 15.00]}
+  - {pillar: Financial strength, metric: current_ratio, label: Current ratio, weight: 1, unit: "x", anchors: [0.70, 1.50, 2.50]}
+  - {pillar: Financial strength, metric: cash_to_debt, label: Cash / debt, weight: 2, unit: "x", anchors: [0.00, 0.30, 1.00]}
+  - {pillar: Working capital, metric: inventory_turnover, label: Inventory turnover, weight: 5, unit: "x", anchors: [1.00, 4.00, 10.00]}
+  - {pillar: Working capital, metric: inventory_days_change, label: Inventory-days change, weight: 3, unit: "days", anchors: [30.00, 0.00, -20.00]}
+  - {pillar: Working capital, metric: asset_turnover, label: Asset turnover, weight: 2, unit: "x", anchors: [0.30, 0.80, 1.50]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.60, 0.30, 0.15]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.70, -0.40, -0.20]}
+  - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.15, 0.00, 0.15]}
+
+energy_materials:
+  - {pillar: Cash quality, metric: roic, label: ROIC, weight: 6, unit: "%", anchors: [0.00, 0.10, 0.22]}
+  - {pillar: Cash quality, metric: fcf_margin, label: Free-cash-flow margin, weight: 7, unit: "%", anchors: [-0.05, 0.10, 0.25]}
+  - {pillar: Cash quality, metric: cash_conversion, label: Cash conversion, weight: 4, unit: "x", anchors: [0.40, 1.00, 1.60]}
+  - {pillar: Cash quality, metric: operating_margin, label: Operating margin, weight: 3, unit: "%", anchors: [-0.05, 0.12, 0.30]}
+  - {pillar: Cycle and growth, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 5, unit: "%", anchors: [-0.10, 0.05, 0.18]}
+  - {pillar: Cycle and growth, metric: fcf_cagr_3y, label: Three-year FCF CAGR, weight: 4, unit: "%", anchors: [-0.15, 0.05, 0.20]}
+  - {pillar: Cycle and growth, metric: latest_revenue_growth, label: Latest revenue growth, weight: 3, unit: "%", anchors: [-0.20, 0.05, 0.20]}
+  - {pillar: Cycle and growth, metric: revenue_acceleration, label: Revenue-growth acceleration, weight: 3, unit: "% pts", anchors: [-0.20, 0.00, 0.20]}
+  - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 8, unit: "%", anchors: [0.00, 0.07, 0.15]}
+  - {pillar: Valuation, metric: ebit_ev, label: EBIT / enterprise value, weight: 6, unit: "%", anchors: [0.00, 0.07, 0.14]}
+  - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 4, unit: "%", anchors: [0.00, 0.06, 0.12]}
+  - {pillar: Valuation, metric: shareholder_yield, label: Shareholder yield, weight: 2, unit: "%", anchors: [-0.05, 0.04, 0.10]}
+  - {pillar: Balance sheet, metric: net_debt_ebitda, label: Net debt / EBITDA, weight: 8, unit: "x", anchors: [6.00, 2.00, 0.00]}
+  - {pillar: Balance sheet, metric: interest_coverage, label: Interest coverage, weight: 5, unit: "x", anchors: [1.00, 5.00, 15.00]}
+  - {pillar: Balance sheet, metric: current_ratio, label: Current ratio, weight: 3, unit: "x", anchors: [0.70, 1.50, 2.50]}
+  - {pillar: Balance sheet, metric: cash_to_debt, label: Cash / debt, weight: 4, unit: "x", anchors: [0.00, 0.30, 1.00]}
+  - {pillar: Capital discipline, metric: capex_to_sales, label: Capex / sales, weight: 4, unit: "%", anchors: [0.40, 0.18, 0.06]}
+  - {pillar: Capital discipline, metric: revenue_growth_to_capex, label: Revenue growth / capex intensity, weight: 3, unit: "x", anchors: [-0.50, 0.30, 1.50]}
+  - {pillar: Capital discipline, metric: incremental_roic, label: Incremental ROIC, weight: 3, unit: "%", anchors: [-0.10, 0.08, 0.25]}
+  - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.70, 0.35, 0.18]}
+  - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.75, -0.45, -0.25]}
+  - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
+  - {pillar: Momentum, metric: relative_return_12m, label: Twelve-month relative return, weight: 3, unit: "%", anchors: [-0.25, 0.00, 0.25]}
+  - {pillar: Momentum, metric: relative_return_6m, label: Six-month relative return, weight: 2, unit: "%", anchors: [-0.18, 0.00, 0.18]}

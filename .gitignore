@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+growth_scorer.egg-info/
+build/
+tmp/
+output/
+release/
+data/score_history.sqlite3
+data/snapshots/
+~$*.docx

@@ -1,0 +1,19 @@
+ticker,country,company,mandate,scorecard
+MSFT,US,Microsoft,Technology Communications and Digital Infrastructure,technology
+JPM,US,JPMorgan Chase,Financial Services,bank
+PGR,US,Progressive,Financial Services,insurer
+LLY,US,Eli Lilly,Healthcare and Life Sciences,healthcare
+CAT,US,Caterpillar,Industrials Infrastructure and Mobility,industrial
+XOM,US,Exxon Mobil,Energy Utilities Materials and Climate Transition,energy_materials
+6758.T,JP,Sony Group,Consumer Media and Education,consumer
+7203.T,JP,Toyota Motor,Industrials Infrastructure and Mobility,industrial
+8306.T,JP,Mitsubishi UFJ Financial Group,Financial Services,bank
+AZN.L,GB,AstraZeneca,Healthcare and Life Sciences,healthcare
+ULVR.L,GB,Unilever,Consumer Media and Education,consumer
+SHEL.L,GB,Shell,Energy Utilities Materials and Climate Transition,energy_materials
+TCS.NS,IN,Tata Consultancy Services,Technology Communications and Digital Infrastructure,technology
+RELIANCE.NS,IN,Reliance Industries,Energy Utilities Materials and Climate Transition,energy_materials
+HDFCBANK.NS,IN,HDFC Bank,Financial Services,bank
+2330.TW,TW,Taiwan Semiconductor Manufacturing,Technology Communications and Digital Infrastructure,semiconductor
+2317.TW,TW,Hon Hai Precision Industry,Industrials Infrastructure and Mobility,industrial
+2881.TW,TW,Fubon Financial,Financial Services,insurer

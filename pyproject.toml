@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "growth-scorer"
+version = "0.4.0"
+description = "Transparent deterministic equity scoring engine for the WGY growth sleeve"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26",
+  "openpyxl>=3.1",
+  "pandas>=2.2",
+  "pydantic>=2.6",
+  "PyYAML>=6.0",
+  "yfinance>=0.2.54",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+growth-scorer = "growth_scorer.cli:main"
+wharton = "growth_scorer.cli:main"
+
+[tool.setuptools.package-data]
+growth_scorer = ["scorecards.yaml"]
+
+[tool.setuptools.packages.find]
+include = ["growth_scorer*"]
+exclude = ["tests*", "data*", "output*", "tmp*", "examples*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
