@@ -11,6 +11,22 @@ During Python installation, select **Add Python to PATH**.
 
 ## Fast installation
 
+### One-line PowerShell installation
+
+After the repository owner has added your GitHub account as a collaborator, paste this complete line into PowerShell:
+
+```powershell
+$d="$env:LOCALAPPDATA\WhartonGrowthScorer"; if (Test-Path "$d\.git") { git -C $d pull } else { git clone https://github.com/kianjindal2010/wharton-growth-scorer.git $d }; powershell -NoProfile -ExecutionPolicy Bypass -File "$d\install.ps1"; $env:Path="$env:LOCALAPPDATA\Programs\WhartonGrowthScorer\bin;$env:Path"
+```
+
+Then type:
+
+```powershell
+wharton predict
+```
+
+The same command can be used later to update and reinstall the model.
+
 1. Open PowerShell.
 2. Download the shared ZIP from Google Drive, extract it, and open PowerShell in the extracted `Wharton_Growth_Scorer_v0.4.0` folder.
 

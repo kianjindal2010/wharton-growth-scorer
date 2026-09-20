@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 from datetime import date
@@ -13,6 +14,15 @@ from .models import InputSnapshot
 from .overrides import apply_overrides, read_overrides
 from .reporting import write_json, write_workbook
 from .storage import record_and_rank, update_paths
+
+
+USER_DATA_ROOT = Path(os.environ.get("WHARTON_DATA_DIR", Path.home() / "Documents" / "Wharton Growth Scorer"))
+COUNTRY_CODES = {"US", "JP", "GB", "IN", "TW", "KR"}
+SCORECARDS = {
+    "auto", "general", "technology", "healthcare", "financial_platform", "industrial",
+    "consumer", "energy_materials", "bank", "insurer", "biotech", "semiconductor",
+    "memory_semiconductor",
+}
 
 
 def _date(value: str) -> date:
@@ -36,9 +46,9 @@ def build_parser() -> argparse.ArgumentParser:
     score.add_argument("--scorecard", default="auto", choices=["auto", "general", "technology", "healthcare", "financial_platform", "industrial", "consumer", "energy_materials", "bank", "insurer", "biotech", "semiconductor", "memory_semiconductor"])
     score.add_argument("--overrides", type=Path)
     score.add_argument("--snapshot", type=Path, help="replay an existing frozen snapshot instead of downloading")
-    score.add_argument("--output-dir", type=Path, default=Path("output/scores"))
-    score.add_argument("--data-dir", type=Path, default=Path("data/snapshots"))
-    score.add_argument("--history-db", type=Path, default=Path("data/score_history.sqlite3"))
+    score.add_argument("--output-dir", type=Path, default=USER_DATA_ROOT / "output" / "scores")
+    score.add_argument("--data-dir", type=Path, default=USER_DATA_ROOT / "data" / "snapshots")
+    score.add_argument("--history-db", type=Path, default=USER_DATA_ROOT / "data" / "score_history.sqlite3")
     backtest = subparsers.add_parser("backtest", help="run a historical multi-company scoring comparison")
     backtest.add_argument("--universe", type=Path, default=Path("config/backtest_universe.csv"))
     backtest.add_argument("--start", required=True, type=_date)
@@ -55,11 +65,14 @@ def _interactive_score_args(args: argparse.Namespace) -> argparse.Namespace:
     if not args.ticker:
         print("Wharton Growth Scorer")
         print("Enter one stock already checked by your team for WInS eligibility.\n")
-        args.ticker = input("Yahoo Finance ticker (example 2330.TW): ").strip()
+        args.ticker = input(
+            "Stock ticker in Yahoo Finance format "
+            "(MSFT / 7203.T / AZN.L / TCS.NS / 2330.TW / 000660.KS): "
+        ).strip().upper()
     if not args.country:
         while True:
-            value = input("Country code [US, JP, GB, IN, TW, KR]: ").strip().upper()
-            if value in {"US", "JP", "GB", "IN", "TW", "KR"}:
+            value = input("Matching country code [US / JP / GB / IN / TW / KR]: ").strip().upper()
+            if value in COUNTRY_CODES:
                 args.country = value
                 break
             print("Please enter US, JP, GB, IN, TW, or KR.")
@@ -67,10 +80,10 @@ def _interactive_score_args(args: argparse.Namespace) -> argparse.Namespace:
         raw = input(f"As-of date YYYY-MM-DD [{date.today().isoformat()}]: ").strip()
         args.as_of = date.today() if not raw else _date(raw)
     if args.scorecard == "auto":
-        raw_scorecard = input("Scorecard [auto/general/technology/healthcare/financial_platform/industrial/consumer/energy_materials/bank/insurer/biotech/semiconductor/memory_semiconductor] [auto]: ").strip().lower()
+        raw_scorecard = input("Scorecard [press Enter for automatic sector selection]: ").strip().lower()
         if raw_scorecard:
-            if raw_scorecard not in {"auto", "general", "technology", "healthcare", "financial_platform", "industrial", "consumer", "energy_materials", "bank", "insurer", "biotech", "semiconductor", "memory_semiconductor"}:
-                raise ValueError("Invalid scorecard")
+            if raw_scorecard not in SCORECARDS:
+                raise ValueError("Invalid scorecard. Use auto, general, technology, healthcare, financial_platform, industrial, consumer, energy_materials, bank, insurer, biotech, semiconductor, or memory_semiconductor.")
             args.scorecard = raw_scorecard
     if args.overrides is None:
         raw_override = input("Verified override workbook path [press Enter to skip]: ").strip().strip('"')
@@ -79,8 +92,26 @@ def _interactive_score_args(args: argparse.Namespace) -> argparse.Namespace:
     return args
 
 
+def _validate_ticker_country(ticker: str, country: str) -> None:
+    ticker = ticker.upper()
+    valid = {
+        "US": lambda value: not value.endswith((".T", ".L", ".NS", ".BO", ".TW", ".TWO", ".KS", ".KQ")),
+        "JP": lambda value: value.endswith(".T"),
+        "GB": lambda value: value.endswith(".L"),
+        "IN": lambda value: value.endswith((".NS", ".BO")),
+        "TW": lambda value: value.endswith((".TW", ".TWO")),
+        "KR": lambda value: value.endswith((".KS", ".KQ")),
+    }
+    examples = {"US": "MSFT", "JP": "7203.T", "GB": "AZN.L", "IN": "TCS.NS", "TW": "2330.TW", "KR": "000660.KS"}
+    if country not in valid or not valid[country](ticker):
+        raise ValueError(f"Ticker {ticker} does not match country {country}. Example: {examples.get(country, 'MSFT')}")
+
+
 def run_score(args: argparse.Namespace) -> int:
     args = _interactive_score_args(args)
+    args.ticker = args.ticker.strip().upper()
+    _validate_ticker_country(args.ticker, args.country)
+    print("\nDownloading prices, statements, exchange rates, benchmarks, and eligible news...")
     if args.snapshot:
         snapshot = InputSnapshot.load(args.snapshot)
         if snapshot.ticker.upper() != args.ticker.upper() or snapshot.country != args.country or snapshot.as_of != args.as_of:
@@ -114,9 +145,9 @@ def run_score(args: argparse.Namespace) -> int:
     update_paths(args.history_db, result)
 
     rank_text = "not meaningful (fewer than two comparables)" if rank is None else f"{rank} of {count}"
-    print(f"{result.ticker}: {result.score:.2f}/100 — {result.verdict}")
+    print(f"{result.ticker}: {result.score:.2f}/100 - {result.verdict}")
     print(f"Scorecard: {result.scorecard}; confidence: {result.confidence:.1f}%; weekly rank: {rank_text}")
-    print(f"Workbook: {workbook_path.resolve()}")
+    print(f"Excel report created: {workbook_path.resolve()}")
     print(f"JSON: {json_path.resolve()}")
     print(f"Snapshot: {frozen_path.resolve()}")
     return 0

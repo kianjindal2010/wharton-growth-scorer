@@ -4,6 +4,24 @@ A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve
 
 ## Quick start
 
+### One-line PowerShell installation
+
+After you have access to the private repository, paste this entire line into PowerShell:
+
+```powershell
+$d="$env:LOCALAPPDATA\WhartonGrowthScorer"; if (Test-Path "$d\.git") { git -C $d pull } else { git clone https://github.com/kianjindal2010/wharton-growth-scorer.git $d }; powershell -NoProfile -ExecutionPolicy Bypass -File "$d\install.ps1"; $env:Path="$env:LOCALAPPDATA\Programs\WhartonGrowthScorer\bin;$env:Path"
+```
+
+Then run from any folder:
+
+```powershell
+wharton predict
+```
+
+Excel reports are stored permanently under `Documents\Wharton Growth Scorer\output\scores\YYYY-MM-DD\`.
+
+### Manual developer installation
+
 ```powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
@@ -39,7 +57,7 @@ Verified override workbook path [press Enter to skip]:
 
 Ticker examples: `MSFT` (US), `7203.T` (Japan), `AZN.L` (UK), `TCS.NS` (India), `2330.TW` (Taiwan), and `000660.KS` (South Korea). Use ISO dates only. For normal companies choose `auto`; manually choose a specialist scorecard only when the analyst can justify it.
 
-The generated Excel file is saved under `output/scores/YYYY-MM-DD/` and contains Summary, Factor Breakdown, Raw Data, Source Log, and Warnings sheets.
+The generated Excel file is saved under `Documents/Wharton Growth Scorer/output/scores/YYYY-MM-DD/` and contains Summary, Factor Breakdown, Raw Data, Source Log, and Warnings sheets.
 
 Run the included multi-market historical comparison with:
 

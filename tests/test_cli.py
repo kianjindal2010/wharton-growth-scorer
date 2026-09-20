@@ -1,6 +1,8 @@
 from datetime import date
 
-from growth_scorer.cli import _interactive_score_args, build_parser
+import pytest
+
+from growth_scorer.cli import _interactive_score_args, _validate_ticker_country, build_parser
 
 
 def test_predict_alias_accepts_complete_noninteractive_command(monkeypatch):
@@ -11,6 +13,19 @@ def test_predict_alias_accepts_complete_noninteractive_command(monkeypatch):
     resolved = _interactive_score_args(args)
     assert resolved.ticker == "MSFT"
     assert resolved.as_of == date(2026, 9, 20)
+
+
+@pytest.mark.parametrize(
+    "ticker,country",
+    [("MSFT", "US"), ("7203.T", "JP"), ("AZN.L", "GB"), ("TCS.NS", "IN"), ("2330.TW", "TW"), ("000660.KS", "KR")],
+)
+def test_ticker_country_formats(ticker, country):
+    _validate_ticker_country(ticker, country)
+
+
+def test_mismatched_ticker_country_is_rejected():
+    with pytest.raises(ValueError, match="does not match"):
+        _validate_ticker_country("2330.TW", "US")
 
 
 def test_predict_prompts_when_inputs_are_missing(monkeypatch):
