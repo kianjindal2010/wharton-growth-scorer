@@ -29,6 +29,16 @@ py -3.12 -m venv .venv
 wharton predict
 ```
 
+### One-line macOS installation
+
+Paste this into Terminal:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/kianjindal2010/wharton-growth-scorer/main/bootstrap.sh | bash && export PATH="$HOME/.local/bin:$PATH"
+```
+
+Then run `wharton predict`. Detailed macOS instructions are in [INSTALL_MAC.md](INSTALL_MAC.md).
+
 The interactive command asks for the ticker, country, as-of date, scorecard, and optional verified override workbook. `auto` selects a sector-aware scorecard for technology, profitable healthcare, financial platforms, industrials, consumer/media, energy/materials/utilities, banks, insurers, pre-profit biotech, or semiconductors. Experienced users can supply everything in one command:
 
 ```powershell
