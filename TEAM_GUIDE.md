@@ -5,7 +5,7 @@
 1. Confirm that the security is eligible and tradable in WInS.
 2. Verify the exact Yahoo Finance ticker and country code.
 3. Review the latest filing and prepare verified overrides when specialist data is absent.
-4. Run `wharton predict` or `run_wharton.bat`.
+4. Run `wharton predict` for one company or `wharton batch` for the team's weekly list.
 5. Review the verdict, confidence, risk gates, warnings, and Factor Breakdown sheet.
 6. Compare the company only with names scored in the same weekly cycle and scorecard.
 7. Save the workbook and source filing in the team's shared research folder.
@@ -34,6 +34,33 @@ Verified override workbook path [press Enter to skip]:
 ```powershell
 wharton predict --ticker 2330.TW --country TW --as-of 2026-09-20 --scorecard auto
 ```
+
+## Batch workflow
+
+Use one shared as-of date for all companies in a weekly comparison. For a guided run:
+
+```powershell
+wharton batch
+```
+
+Keep adding tickers when prompted, then press Enter at the next blank ticker prompt. The model processes every company, creates the same detailed five-sheet workbook for each one, and adds a consolidated `Batch_Summary.xlsx` workbook.
+
+For a prepared team list, use a CSV with this format:
+
+```csv
+ticker,country,scorecard,overrides
+MSFT,US,auto,
+2330.TW,TW,auto,
+7203.T,JP,auto,
+```
+
+Then run:
+
+```powershell
+wharton batch --input .\examples\batch_input.csv --as-of 2026-09-21
+```
+
+The `scorecard` and `overrides` fields may be blank. If an override path is relative, it is interpreted relative to the CSV's folder. The batch continues when one company fails and records the reason on the Failures sheet. Review ranks only within the same resolved scorecard; cross-scorecard ranks are not valid.
 
 ## Supported country codes
 

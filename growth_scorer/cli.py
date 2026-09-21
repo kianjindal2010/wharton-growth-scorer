@@ -2,27 +2,24 @@ from __future__ import annotations
 
 import argparse
 import os
-import re
 import sys
 from datetime import date
 from pathlib import Path
 
 from .data import build_snapshot
 from .backtest import run_backtest
+from .batch import BatchItem, read_batch_csv, run_batch
 from .engine import score_snapshot
 from .models import InputSnapshot
 from .overrides import apply_overrides, read_overrides
 from .reporting import write_json, write_workbook
 from .storage import record_and_rank, update_paths
+from .validation import COUNTRY_CODES, SCORECARDS, safe_name, validate_ticker_country
 
 
 USER_DATA_ROOT = Path(os.environ.get("WHARTON_DATA_DIR", Path.home() / "Documents" / "Wharton Growth Scorer"))
-COUNTRY_CODES = {"US", "JP", "GB", "IN", "TW", "KR"}
-SCORECARDS = {
-    "auto", "general", "technology", "healthcare", "financial_platform", "industrial",
-    "consumer", "energy_materials", "bank", "insurer", "biotech", "semiconductor",
-    "memory_semiconductor",
-}
+_safe_name = safe_name
+_validate_ticker_country = validate_ticker_country
 
 
 def _date(value: str) -> date:
@@ -30,10 +27,6 @@ def _date(value: str) -> date:
         return date.fromisoformat(value)
     except ValueError as exc:
         raise argparse.ArgumentTypeError("Use YYYY-MM-DD") from exc
-
-
-def _safe_name(ticker: str) -> str:
-    return re.sub(r"[^A-Za-z0-9._-]+", "_", ticker)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -49,6 +42,12 @@ def build_parser() -> argparse.ArgumentParser:
     score.add_argument("--output-dir", type=Path, default=USER_DATA_ROOT / "output" / "scores")
     score.add_argument("--data-dir", type=Path, default=USER_DATA_ROOT / "data" / "snapshots")
     score.add_argument("--history-db", type=Path, default=USER_DATA_ROOT / "data" / "score_history.sqlite3")
+    batch = subparsers.add_parser("batch", help="score multiple stocks in one run and create a comparison workbook")
+    batch.add_argument("--input", type=Path, help="CSV with ticker, country, optional scorecard and overrides columns")
+    batch.add_argument("--as-of", type=_date)
+    batch.add_argument("--output-dir", type=Path, default=USER_DATA_ROOT / "output" / "batches")
+    batch.add_argument("--data-dir", type=Path, default=USER_DATA_ROOT / "data" / "snapshots")
+    batch.add_argument("--history-db", type=Path, default=USER_DATA_ROOT / "data" / "score_history.sqlite3")
     backtest = subparsers.add_parser("backtest", help="run a historical multi-company scoring comparison")
     backtest.add_argument("--universe", type=Path, default=Path("config/backtest_universe.csv"))
     backtest.add_argument("--start", required=True, type=_date)
@@ -92,19 +91,34 @@ def _interactive_score_args(args: argparse.Namespace) -> argparse.Namespace:
     return args
 
 
-def _validate_ticker_country(ticker: str, country: str) -> None:
-    ticker = ticker.upper()
-    valid = {
-        "US": lambda value: not value.endswith((".T", ".L", ".NS", ".BO", ".TW", ".TWO", ".KS", ".KQ")),
-        "JP": lambda value: value.endswith(".T"),
-        "GB": lambda value: value.endswith(".L"),
-        "IN": lambda value: value.endswith((".NS", ".BO")),
-        "TW": lambda value: value.endswith((".TW", ".TWO")),
-        "KR": lambda value: value.endswith((".KS", ".KQ")),
-    }
-    examples = {"US": "MSFT", "JP": "7203.T", "GB": "AZN.L", "IN": "TCS.NS", "TW": "2330.TW", "KR": "000660.KS"}
-    if country not in valid or not valid[country](ticker):
-        raise ValueError(f"Ticker {ticker} does not match country {country}. Example: {examples.get(country, 'MSFT')}")
+def _interactive_batch_args(args: argparse.Namespace) -> tuple[argparse.Namespace, list[BatchItem] | None]:
+    if not args.as_of:
+        raw = input(f"One as-of date for the whole batch YYYY-MM-DD [{date.today().isoformat()}]: ").strip()
+        args.as_of = date.today() if not raw else _date(raw)
+    if args.input:
+        return args, None
+
+    print("\nAdd companies one at a time. Press Enter on a blank ticker when finished.")
+    items: list[BatchItem] = []
+    while True:
+        ticker = input(f"Company {len(items) + 1} ticker [blank to run batch]: ").strip().upper()
+        if not ticker:
+            if items:
+                break
+            print("Please add at least one company.")
+            continue
+        while True:
+            country = input("Country code [US / JP / GB / IN / TW / KR]: ").strip().upper()
+            if country in COUNTRY_CODES:
+                break
+            print("Please enter US, JP, GB, IN, TW, or KR.")
+        scorecard = input("Scorecard [press Enter for automatic selection]: ").strip().lower() or "auto"
+        if scorecard not in SCORECARDS:
+            raise ValueError(f"Invalid scorecard: {scorecard}")
+        override = input("Verified override workbook [press Enter to skip]: ").strip().strip('"')
+        items.append(BatchItem(ticker, country, scorecard, Path(override) if override else None))
+        print(f"Added {ticker}. Total companies: {len(items)}\n")
+    return args, items
 
 
 def run_score(args: argparse.Namespace) -> int:
@@ -163,6 +177,17 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command in {"score", "predict"}:
             return run_score(args)
+        if args.command == "batch":
+            args, interactive_items = _interactive_batch_args(args)
+            items = interactive_items if interactive_items is not None else read_batch_csv(args.input)
+            workbook_path, json_path, payload = run_batch(
+                items, args.as_of, args.output_dir, args.data_dir, args.history_db,
+            )
+            print(f"\nBatch complete: {payload['successful']} scored, {payload['failed']} failed")
+            print(f"Batch Excel summary: {workbook_path.resolve()}")
+            print(f"Batch JSON summary: {json_path.resolve()}")
+            print(f"Individual reports: {(workbook_path.parent / 'companies').resolve()}")
+            return 0 if payload["successful"] else 1
         if args.command == "backtest":
             csv_path, json_path, payload = run_backtest(
                 args.universe,

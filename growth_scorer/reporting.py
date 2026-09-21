@@ -51,7 +51,7 @@ def _write_summary(workbook: Workbook, result: ScoreResult, snapshot: InputSnaps
         ("Overall score", result.score),
         ("Verdict", result.verdict),
         ("Data confidence", result.confidence / 100),
-        ("Weekly comparable rank", "Not meaningful" if result.rank is None else f"{result.rank} of {result.comparable_count}"),
+        ("Comparable rank", "Not meaningful" if result.rank is None else f"{result.rank} of {result.comparable_count}"),
         ("Growth sleeve policy", "50% of total portfolio; initial reference amount $150,000"),
         ("Last price date", snapshot.last_price_date.isoformat() if snapshot.last_price_date else ""),
         ("Latest financial period", snapshot.latest_financial_date.isoformat() if snapshot.latest_financial_date else ""),

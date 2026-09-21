@@ -18,6 +18,12 @@ Then run from any folder:
 wharton predict
 ```
 
+To score several companies together and receive one comparison workbook, run:
+
+```powershell
+wharton batch
+```
+
 Excel reports are stored permanently under `Documents\Wharton Growth Scorer\output\scores\YYYY-MM-DD\`.
 The same installer command can be used later to download updates and reinstall the model.
 
@@ -69,6 +75,41 @@ Verified override workbook path [press Enter to skip]:
 Ticker examples: `MSFT` (US), `7203.T` (Japan), `AZN.L` (UK), `TCS.NS` (India), `2330.TW` (Taiwan), and `000660.KS` (South Korea). Use ISO dates only. For normal companies choose `auto`; manually choose a specialist scorecard only when the analyst can justify it.
 
 The generated Excel file is saved under `Documents/Wharton Growth Scorer/output/scores/YYYY-MM-DD/` and contains Summary, Factor Breakdown, Raw Data, Source Log, and Warnings sheets.
+
+## Batch scoring
+
+Run the guided batch interface from PowerShell, Command Prompt, or macOS Terminal:
+
+```text
+wharton batch
+One as-of date for the whole batch YYYY-MM-DD [today]: 2026-09-21
+Company 1 ticker [blank to run batch]: MSFT
+Country code [US / JP / GB / IN / TW / KR]: US
+Scorecard [press Enter for automatic selection]:
+Verified override workbook [press Enter to skip]:
+Company 2 ticker [blank to run batch]: 2330.TW
+Country code [US / JP / GB / IN / TW / KR]: TW
+Scorecard [press Enter for automatic selection]:
+Verified override workbook [press Enter to skip]:
+Company 3 ticker [blank to run batch]:
+```
+
+For a larger list, copy [examples/batch_input.csv](examples/batch_input.csv), add one company per row, and run:
+
+```powershell
+wharton batch --input .\examples\batch_input.csv --as-of 2026-09-21
+```
+
+The CSV requires `ticker` and `country`. The `scorecard` and `overrides` columns are optional. Relative override paths are resolved from the CSV file's folder.
+
+Each batch creates:
+
+- `Batch_Summary.xlsx`, containing the consolidated results, within-scorecard ranks, warnings, failures, and clickable links to each detailed report.
+- `Batch_Summary.json`, containing the same machine-readable results.
+- A `companies` folder containing the normal five-sheet Excel workbook and JSON result for every successfully scored company.
+- Frozen snapshots and score-history entries, exactly as with individual runs.
+
+Batch ranks compare only companies that resolved to the same scorecard. A rank is intentionally marked “Not meaningful” when fewer than two companies share that scorecard. One failed ticker does not stop the rest of the batch. Default batch output is stored under `Documents\Wharton Growth Scorer\output\batches\YYYY-MM-DD\batch_TIMESTAMP\`.
 
 Run the included multi-market historical comparison with:
 
