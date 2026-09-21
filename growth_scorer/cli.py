@@ -9,9 +9,8 @@ from pathlib import Path
 from .data import build_snapshot
 from .backtest import run_backtest
 from .batch import BatchItem, read_batch_csv, run_batch
-from .engine import classify, score_snapshot
+from .engine import score_snapshot
 from .models import InputSnapshot
-from .overrides import apply_overrides, discover_override, read_overrides
 from .reporting import write_json, write_workbook
 from .storage import record_and_rank, update_paths
 from .validation import COUNTRY_CODES, SCORECARDS, safe_name, validate_ticker_country
@@ -36,20 +35,17 @@ def build_parser() -> argparse.ArgumentParser:
     score.add_argument("--ticker", help="exact Yahoo Finance ticker")
     score.add_argument("--country", choices=["US", "JP", "GB", "IN", "TW", "KR"])
     score.add_argument("--as-of", type=_date)
-    score.add_argument("--scorecard", default="auto", choices=["auto", "general", "technology", "healthcare", "financial_platform", "industrial", "consumer", "energy_materials", "bank", "insurer", "biotech", "semiconductor", "memory_semiconductor"])
-    score.add_argument("--overrides", type=Path)
-    score.add_argument("--overrides-dir", type=Path, default=USER_DATA_ROOT / "overrides", help="folder searched for ticker-specific verified overrides")
+    score.add_argument("--scorecard", default="auto", choices=sorted(SCORECARDS))
     score.add_argument("--snapshot", type=Path, help="replay an existing frozen snapshot instead of downloading")
     score.add_argument("--output-dir", type=Path, default=USER_DATA_ROOT / "output" / "scores")
     score.add_argument("--data-dir", type=Path, default=USER_DATA_ROOT / "data" / "snapshots")
     score.add_argument("--history-db", type=Path, default=USER_DATA_ROOT / "data" / "score_history.sqlite3")
     batch = subparsers.add_parser("batch", help="score multiple stocks in one run and create a comparison workbook")
-    batch.add_argument("--input", type=Path, help="CSV with ticker, country, optional scorecard and overrides columns")
+    batch.add_argument("--input", type=Path, help="CSV with ticker, country, and optional scorecard columns")
     batch.add_argument("--as-of", type=_date)
     batch.add_argument("--output-dir", type=Path, default=USER_DATA_ROOT / "output" / "batches")
     batch.add_argument("--data-dir", type=Path, default=USER_DATA_ROOT / "data" / "snapshots")
     batch.add_argument("--history-db", type=Path, default=USER_DATA_ROOT / "data" / "score_history.sqlite3")
-    batch.add_argument("--overrides-dir", type=Path, default=USER_DATA_ROOT / "overrides", help="folder searched for ticker-specific verified overrides")
     backtest = subparsers.add_parser("backtest", help="run a historical multi-company scoring comparison")
     backtest.add_argument("--universe", type=Path, default=Path("config/backtest_universe.csv"))
     backtest.add_argument("--start", required=True, type=_date)
@@ -84,12 +80,8 @@ def _interactive_score_args(args: argparse.Namespace) -> argparse.Namespace:
         raw_scorecard = input("Scorecard [press Enter for automatic sector selection]: ").strip().lower()
         if raw_scorecard:
             if raw_scorecard not in SCORECARDS:
-                raise ValueError("Invalid scorecard. Use auto, general, technology, healthcare, financial_platform, industrial, consumer, energy_materials, bank, insurer, biotech, semiconductor, or memory_semiconductor.")
+                raise ValueError("Invalid scorecard. Use auto or one of the documented detailed scorecards.")
             args.scorecard = raw_scorecard
-    if args.overrides is None:
-        raw_override = input("Verified override workbook [Enter to auto-search the overrides folder]: ").strip().strip('"')
-        if raw_override:
-            args.overrides = Path(raw_override)
     return args
 
 
@@ -117,8 +109,7 @@ def _interactive_batch_args(args: argparse.Namespace) -> tuple[argparse.Namespac
         scorecard = input("Scorecard [press Enter for automatic selection]: ").strip().lower() or "auto"
         if scorecard not in SCORECARDS:
             raise ValueError(f"Invalid scorecard: {scorecard}")
-        override = input("Verified override workbook [Enter to auto-search the overrides folder]: ").strip().strip('"')
-        items.append(BatchItem(ticker, country, scorecard, Path(override) if override else None))
+        items.append(BatchItem(ticker, country, scorecard))
         print(f"Added {ticker}. Total companies: {len(items)}\n")
     return args, items
 
@@ -134,14 +125,6 @@ def run_score(args: argparse.Namespace) -> int:
             raise ValueError("Snapshot ticker, country, and as-of date must match the command")
     else:
         snapshot = build_snapshot(args.ticker, args.country, args.as_of)
-
-    detected_scorecard = classify(snapshot, args.scorecard)
-    override_path = args.overrides or discover_override(args.overrides_dir, snapshot.ticker, detected_scorecard)
-    if override_path:
-        records, warnings = read_overrides(override_path, args.as_of)
-        apply_overrides(snapshot, records, warnings)
-        if args.overrides is None:
-            snapshot.warnings.append(f"Automatically applied ticker-specific verified overrides: {override_path}")
 
     ticker_name = _safe_name(snapshot.ticker)
     frozen_path = args.data_dir / ticker_name / f"{args.as_of.isoformat()}.json"
@@ -187,7 +170,7 @@ def main(argv: list[str] | None = None) -> int:
             args, interactive_items = _interactive_batch_args(args)
             items = interactive_items if interactive_items is not None else read_batch_csv(args.input)
             workbook_path, json_path, payload = run_batch(
-                items, args.as_of, args.output_dir, args.data_dir, args.history_db, args.overrides_dir,
+                items, args.as_of, args.output_dir, args.data_dir, args.history_db,
             )
             print(f"\nBatch complete: {payload['successful']} scored, {payload['failed']} failed")
             print(f"Batch Excel summary: {workbook_path.resolve()}")

@@ -4,7 +4,7 @@
 
 1. Confirm that the security is eligible and tradable in WInS.
 2. Verify the exact Yahoo Finance ticker and country code.
-3. Review the latest filing and prepare verified overrides when specialist data is absent.
+3. Review the latest filing as a human research check; the scoring program itself remains fully automated.
 4. Run `wharton predict` for one company or `wharton batch` for the team's weekly list.
 5. Review the verdict, confidence, risk gates, warnings, and Factor Breakdown sheet.
 6. Compare the company only with names scored in the same weekly cycle and scorecard.
@@ -25,8 +25,7 @@ wharton predict
 Yahoo Finance ticker (example 2330.TW): 2330.TW
 Country code [US, JP, GB, IN, TW, KR]: TW
 As-of date YYYY-MM-DD [today]:
-Scorecard [auto/general/technology/healthcare/financial_platform/industrial/consumer/energy_materials/bank/insurer/biotech/semiconductor/memory_semiconductor] [auto]:
-Verified override workbook [Enter to auto-search the overrides folder]:
+Scorecard [press Enter for fully automatic detailed selection]:
 ```
 
 ## Automated example
@@ -48,10 +47,10 @@ Keep adding tickers when prompted, then press Enter at the next blank ticker pro
 For a prepared team list, use a CSV with this format:
 
 ```csv
-ticker,country,scorecard,overrides
-MSFT,US,auto,
-2330.TW,TW,auto,
-7203.T,JP,auto,
+ticker,country,scorecard
+MSFT,US,auto
+2330.TW,TW,auto
+7203.T,JP,auto
 ```
 
 Then run:
@@ -60,7 +59,7 @@ Then run:
 wharton batch --input .\examples\batch_input.csv --as-of 2026-09-21
 ```
 
-The `scorecard` and `overrides` fields may be blank. If an override path is relative, it is interpreted relative to the CSV's folder. The batch continues when one company fails and records the reason on the Failures sheet. Review ranks only within the same resolved scorecard; cross-scorecard ranks are not valid.
+The `scorecard` field may be blank. The batch continues when one company fails and records the reason on the Failures sheet. Review ranks only within the same resolved scorecard; cross-scorecard ranks are not valid.
 
 ## Supported country codes
 
@@ -75,20 +74,18 @@ The `scorecard` and `overrides` fields may be blank. If an override path is rela
 
 ## Semiconductor scorecards
 
-The automatic detector uses Yahoo's detailed industry key and company description. It selects `semiconductor` for foundries, chip designers, equipment suppliers, and diversified semiconductor firms. It selects `memory_semiconductor` when the semiconductor profile also identifies DRAM, HBM, NAND, flash, or memory-chip operations. The memory scorecard still requires a dated, verified memory-pricing input and emphasizes a six-to-twelve-month tactical research horizon.
-
-The included 20 March 2026 memory override is a historical backtest input. Do not reuse it for a current score. For each new scoring date, verify and document the latest industry forecast that was public by that date.
+The automatic detector uses Yahoo's detailed industry key and company description. It selects `semiconductor` for foundries, chip designers, equipment suppliers, and diversified semiconductor firms. It selects `memory_semiconductor` for DRAM, HBM, NAND, flash, or memory-chip operations. The memory model is fully automated and measures reported cycle inflection, inventory, margins, cash flow, valuation, R&D, risk, and momentum.
 
 ## Sector-aware scorecards
 
 | Team mandate | Typical automatic scorecard | Extra emphasis |
 |---|---|---|
-| Technology, communications and digital infrastructure | Technology or semiconductor | Gross margin, R&D intensity, scalable cash flow, growth-adjusted valuation |
-| Healthcare and life sciences | Healthcare or pre-profit biotech | Innovation spending, cash runway where relevant, margins and balance-sheet resilience |
-| Financial services | Bank, insurer, or financial platform | Regulatory strength for banks/insurers; ROE, cash economics and valuation for platforms |
-| Industrials, infrastructure and mobility | Industrial | Capital efficiency, asset turnover, capex intensity and inventory-cycle control |
-| Consumer, media and education | Consumer | Brand economics, gross margin, inventory turnover, cash conversion and valuation |
-| Energy, utilities, materials and climate transition | Energy/materials | Cash returns, leverage, capital discipline, cyclicality and shareholder yield |
+| Technology, communications and digital infrastructure | Software/cloud, hardware/telecom, semiconductor, memory semiconductor | Scalable margins, R&D, cash flow, chip cycle and valuation |
+| Healthcare and life sciences | Pharmaceuticals, medical devices, healthcare, pre-profit biotech | Innovation, margins, cash runway, growth and resilience |
+| Financial services | Bank, insurer, payments/fintech, asset management | Automated profitability, growth, valuation and balance-sheet resilience |
+| Industrials, infrastructure and mobility | Aerospace/defense, transportation/logistics, automotive, capital goods | Capital efficiency, turnover, capex, leverage and inventory cycle |
+| Consumer, media and education | Staples, retail/discretionary, media/education | Margin durability, inventory productivity, growth and cash conversion |
+| Energy, utilities, materials and climate transition | Oil/gas, utilities/renewables, materials/mining | Cash returns, leverage, capital intensity and cycle discipline |
 
 Use `auto` unless an analyst has documented why a manual scorecard is more appropriate. Review the classification reason in the Summary sheet.
 
@@ -96,23 +93,11 @@ Use `auto` unless an analyst has documented why a manual scorecard is more appro
 
 The news pillar is 5% of every final score. The model analyzes eligible Yahoo Finance headlines and summaries, removes duplicates, excludes future-dated items, rejects articles that do not mention the company or ticker, and weights the rest for relevance, source quality, and recency. Review the stored news records in the Raw Data sheet; sentiment is supporting evidence, not a substitute for reading the underlying articles.
 
-For a historical run, an empty news set is expected when Yahoo Finance no longer exposes that period. The model applies neutral scores and lowers confidence by five percentage points. Never paste current sentiment into a historical override.
+For a historical run, an empty news set is expected when Yahoo Finance no longer exposes that period. The model applies neutral scores and lowers confidence by five percentage points.
 
-## Override workbook rules
+## Fully automated data policy
 
-Use the columns below exactly. Rows without a verifier or with a publication date after the scoring date are ignored.
-
-| Column | Purpose |
-|---|---|
-| Metric name | Canonical metric key from `scorecards.yaml` |
-| Value | Numeric value expressed as a decimal where appropriate |
-| Unit | Percent, ratio, months, or currency |
-| Reporting period | Filing period covered by the value |
-| Publication date | Date the information became public |
-| Source URL | Direct regulatory or company filing link |
-| Verified by | Team member who checked the value |
-
-Verified overrides work with every industry. Put an exact ticker file such as `MSFT.xlsx` in `Documents\Wharton Growth Scorer\overrides`, or organize it under the automatically detected scorecard, such as `overrides\technology\MSFT.xlsx`. The model detects the scorecard first and then applies the matching ticker file. Explicit paths still take precedence. Bank CET1, insurer solvency and reserves, biotechnology-specific measures, and memory pricing normally require overrides. Missing values receive a neutral metric score but reduce confidence; weights are never redistributed.
+The command accepts no manual metric replacement files. Bank and insurer models use automatically calculated ROE, ROA, net margin, book-value growth, asset growth, earnings yield, price-to-book measures, dividend yield, equity/assets, leverage, market risk and momentum. The memory model uses reported revenue, margin, inventory, cash-flow and price-cycle evidence. Missing values remain neutral and reduce data confidence; weights are never silently redistributed.
 
 ## Reading the verdict
 

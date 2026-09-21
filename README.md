@@ -45,13 +45,13 @@ curl -fsSL https://raw.githubusercontent.com/kianjindal2010/wharton-growth-score
 
 Then run `wharton predict`. Detailed macOS instructions are in [INSTALL_MAC.md](INSTALL_MAC.md).
 
-The interactive command asks for the ticker, country, as-of date, scorecard, and optional verified override workbook. `auto` examines Yahoo's sector, sector key, industry, industry key, and company description. It then selects the technology, profitable healthcare, financial-platform, industrial, consumer/media, energy/materials/utilities, bank, insurer, pre-profit biotech, semiconductor, or memory-semiconductor scorecard. The Excel Summary sheet records the classification confidence and the exact matching reason. Experienced users can supply everything in one command:
+The interactive command asks for the ticker, country, as-of date, and scorecard. `auto` examines Yahoo's sector, sector key, industry, industry key, company description, and financial condition. It selects one of 28 broad or detailed models. The Excel Summary sheet records the classification confidence and exact matching reason. Experienced users can supply everything in one command:
 
 ```powershell
 wharton predict --ticker 2330.TW --country TW --as-of 2026-09-20 --scorecard auto
 ```
 
-Add `--overrides optional_overrides.xlsx` for verified filing data, or `--snapshot path.json` to reproduce a frozen run without downloading new data. If `--overrides` is omitted, the model automatically searches the shared overrides folder after detecting the scorecard.
+Add `--snapshot path.json` to reproduce a frozen run without downloading new data. The model is fully automated and accepts no manual metric replacement files.
 
 Each run writes a five-sheet Excel workbook, a JSON result, a frozen input snapshot, and a row in `data/score_history.sqlite3`. Default output is under `output/scores/<as-of>/`.
 
@@ -69,7 +69,6 @@ Yahoo Finance ticker (example 2330.TW): MSFT
 Country code [US, JP, GB, IN, TW, KR]: US
 As-of date YYYY-MM-DD [today]: 2026-09-20
 Scorecard [auto/...]: auto
-Verified override workbook path [press Enter to skip]:
 ```
 
 Ticker examples: `MSFT` (US), `7203.T` (Japan), `AZN.L` (UK), `TCS.NS` (India), `2330.TW` (Taiwan), and `000660.KS` (South Korea). Use ISO dates only. For normal companies choose `auto`; manually choose a specialist scorecard only when the analyst can justify it.
@@ -86,11 +85,9 @@ One as-of date for the whole batch YYYY-MM-DD [today]: 2026-09-21
 Company 1 ticker [blank to run batch]: MSFT
 Country code [US / JP / GB / IN / TW / KR]: US
 Scorecard [press Enter for automatic selection]:
-Verified override workbook [press Enter to skip]:
 Company 2 ticker [blank to run batch]: 2330.TW
 Country code [US / JP / GB / IN / TW / KR]: TW
 Scorecard [press Enter for automatic selection]:
-Verified override workbook [press Enter to skip]:
 Company 3 ticker [blank to run batch]:
 ```
 
@@ -100,7 +97,7 @@ For a larger list, copy [examples/batch_input.csv](examples/batch_input.csv), ad
 wharton batch --input .\examples\batch_input.csv --as-of 2026-09-21
 ```
 
-The CSV requires `ticker` and `country`. The `scorecard` and `overrides` columns are optional. Relative override paths are resolved from the CSV file's folder.
+The CSV requires `ticker` and `country`. The `scorecard` column is optional; use `auto` or leave it blank.
 
 Each batch creates:
 
@@ -111,18 +108,11 @@ Each batch creates:
 
 Batch ranks compare only companies that resolved to the same scorecard. A rank is intentionally marked “Not meaningful” when fewer than two companies share that scorecard. One failed ticker does not stop the rest of the batch. Default batch output is stored under `Documents\Wharton Growth Scorer\output\batches\YYYY-MM-DD\batch_TIMESTAMP\`.
 
-## Automatic verified overrides for every industry
+## Detailed automatic models
 
-Verified overrides are supported for every scorecard, not only semiconductors. Store an exact ticker-specific `.xlsx` or `.csv` file in either location:
+The detailed models are `software_cloud`, `hardware_telecom`, `pharmaceuticals`, `medical_devices`, `payments_fintech`, `asset_management`, `aerospace_defense`, `transportation_logistics`, `automotive`, `capital_goods`, `consumer_staples`, `retail_discretionary`, `media_education`, `oil_gas`, `utilities_renewables`, and `materials_mining`. Banks, insurers, pre-profit biotechnology, general semiconductors, and memory semiconductors retain dedicated specialist models. Broad technology, healthcare, financial-platform, industrial, consumer, energy/materials, and general models remain as fallbacks.
 
-```text
-Documents\Wharton Growth Scorer\overrides\MSFT.xlsx
-Documents\Wharton Growth Scorer\overrides\technology\MSFT.xlsx
-```
-
-After downloading the company profile, the model detects the industry and searches both the main overrides folder and the detected scorecard subfolder. This works for technology, healthcare, financial platforms, industrials, consumer, energy/materials, banks, insurers, biotech, semiconductors, and general companies. The filename must be the exact Yahoo ticker, including exchange suffixes such as `2330.TW.xlsx`.
-
-An explicit `--overrides` path always takes precedence. If more than one automatic file matches, the run stops for that ticker and reports the ambiguity. Publication dates after the scoring date and rows without `Verified by` remain blocked. Automatic discovery chooses the correct file; it never invents filing values.
+Each detailed model uses its own normalized metric weights. Examples: software emphasizes scalable margins, growth and R&D; logistics emphasizes asset turnover and capex; retail emphasizes inventory efficiency; utilities emphasize debt coverage and capital intensity; mining emphasizes cycle acceleration and incremental returns. All inputs are calculated automatically from Yahoo prices, company profiles, statements, benchmarks, exchange rates, and news.
 
 Run the included multi-market historical comparison with:
 
@@ -136,7 +126,7 @@ Run the all-sector enhanced comparison with:
 wharton backtest --universe config/enhanced_backtest_universe.csv --start 2026-03-20 --end 2026-09-18
 ```
 
-The repository includes the [six-month backtest report](reports/Growth_Sleeve_Six_Month_Backtest_Report.docx), [company-level results](backtests/2026-03-20_to_2026-09-18/backtest_results.csv), and frozen scoring snapshots used in that test.
+The repository includes the [six-month backtest report](reports/Growth_Sleeve_Six_Month_Backtest_Report.docx), [company-level results](backtests/2026-03-20_to_2026-09-18/backtest_results.csv), and frozen scoring snapshots used in that test. Those results describe the earlier broad sector-aware model; version 0.7.0's 28-model architecture requires a fresh out-of-sample evaluation.
 
 Run the dedicated DRAM-manufacturer and TSMC diagnostic with:
 
@@ -144,25 +134,11 @@ Run the dedicated DRAM-manufacturer and TSMC diagnostic with:
 wharton backtest --universe config/semiconductor_backtest_universe.csv --start 2026-03-20 --end 2026-09-18
 ```
 
-Memory manufacturers use the manually selected `memory_semiconductor` scorecard, which adds cycle-inflection and verified industry-pricing inputs. TSMC uses the broader `semiconductor` scorecard. Do not use the memory scorecard for foundries, equipment makers, or non-memory chip designers.
-
-## Override workbook
-
-The first worksheet must contain these columns (capitalization is ignored):
-
-- Metric name
-- Value
-- Unit
-- Reporting period
-- Publication date
-- Source URL
-- Verified by
-
-Only rows with a non-empty `Verified by` field and a publication date on or before the run's `as-of` date are applied. Canonical metric names are shown in the Excel Factor Breakdown sheet and in `growth_scorer/scorecards.yaml`.
+Memory manufacturers are automatically identified from DRAM, HBM, NAND, flash, and memory-chip language. Their model measures revenue acceleration, gross-margin inflection, inventory normalization, cash generation, valuation, financial strength, R&D, risk, and momentum. TSMC and other foundries use the broader `semiconductor` model.
 
 ## Important limitations
 
-- Yahoo Finance is a convenience data source, not a regulatory filing system. Bank capital, insurer solvency/reserves, biotechnology-specific data, and industry-cycle inputs may require verified overrides.
+- Yahoo Finance is a convenience data source, not a regulatory filing system. The fully automated bank and insurer models use statement-based balance-sheet resilience rather than unavailable regulatory ratios.
 - Yahoo Finance normally exposes a recent news window, not a complete historical archive. Historical scores must never substitute present-day headlines for missing point-in-time news.
 - The model is a research consistency tool, not a prediction of returns or a substitute for investment judgment.
 - The memory scorecard is a tactical six-to-twelve-month cyclical screen. Its first reported improvement is in-sample and requires walk-forward validation before portfolio use.

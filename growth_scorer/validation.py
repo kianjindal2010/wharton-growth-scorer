@@ -8,6 +8,10 @@ SCORECARDS = {
     "auto", "general", "technology", "healthcare", "financial_platform", "industrial",
     "consumer", "energy_materials", "bank", "insurer", "biotech", "semiconductor",
     "memory_semiconductor",
+    "software_cloud", "hardware_telecom", "pharmaceuticals", "medical_devices",
+    "payments_fintech", "asset_management", "aerospace_defense", "transportation_logistics",
+    "automotive", "capital_goods", "consumer_staples", "retail_discretionary",
+    "media_education", "oil_gas", "utilities_renewables", "materials_mining",
 }
 
 

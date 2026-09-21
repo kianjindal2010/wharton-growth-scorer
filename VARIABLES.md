@@ -108,18 +108,9 @@ Annual and quarterly statement tables are retained in the frozen snapshot and Ex
 | `debt_to_cash` | Debt divided by cash |
 | `ev_to_rd` | Enterprise value divided by R&D expense |
 
-## Verified specialist variables
+## Automated specialist variables
 
-These are normally entered through a dated analyst override file because Yahoo Finance does not provide them consistently.
-
-| Scorecard | Metric keys |
-|---|---|
-| Bank | `efficiency_ratio`, `cet1_buffer`, `npl_ratio`, `loan_loss_coverage`, `loan_to_deposit` |
-| Insurer | `combined_ratio`, `solvency_buffer`, `reserve_coverage` |
-| Pre-profit biotechnology | Cash runway, share dilution, R&D commitment, debt/cash and EV/R&D variables above |
-| Memory semiconductor | `memory_contract_price_growth`—a verified, dated DRAM pricing-cycle input |
-
-The override record also stores `unit`, `reporting_period`, `publication_date`, `source_url`, and `verified_by`. Future-dated and unverified rows are rejected.
+All scorecards now use downloaded or calculated inputs. The bank and insurer models add `net_margin`, `equity_to_assets`, and `asset_growth`. Memory semiconductors use revenue acceleration, gross-margin trend, inventory-days change, cash generation, valuation, R&D, market risk and relative momentum. Biotechnology uses calculated cash runway, dilution, R&D intensity, funding strength and EV/R&D. There is no manual metric-replacement workflow.
 
 ## Industry-detection variables
 
@@ -161,10 +152,26 @@ Each stored article includes title, summary, publication timestamp, provider, UR
 | `consumer` | Brand economics, margins, inventory turnover, cash conversion |
 | `energy_materials` | Cash returns, leverage, capital discipline and cyclicality |
 | `bank` | Profitability, growth, valuation, capital and asset quality |
-| `insurer` | Profitability, growth, valuation, solvency and reserve coverage |
+| `insurer` | Profitability, growth, valuation and automated balance-sheet resilience |
 | `biotech` | Cash runway, dilution, R&D commitment, funding and valuation |
 | `semiconductor` | Quality, cycle, valuation, balance sheet, innovation and momentum |
-| `memory_semiconductor` | Earnings inflection, DRAM pricing cycle, inventory, margins and momentum |
+| `memory_semiconductor` | Reported earnings inflection, inventory, margins, cash flow and momentum |
+| `software_cloud` | Gross margin, recurring cash economics, growth, R&D and growth-adjusted valuation |
+| `hardware_telecom` | ROIC, cash conversion, leverage, coverage and durable cash flow |
+| `pharmaceuticals` | R&D, product economics, margins, growth and pipeline-funding capacity |
+| `medical_devices` | ROIC, gross margin, cash conversion, FCF and balance-sheet resilience |
+| `payments_fintech` | Operating leverage, transaction growth, FCF, cash conversion and valuation |
+| `asset_management` | ROE, operating margin, earnings yield, shareholder yield and balance sheet |
+| `aerospace_defense` | Revenue conversion, margins, FCF, inventory cycle and capital returns |
+| `transportation_logistics` | Asset turnover, margins, capex intensity, cash conversion and leverage |
+| `automotive` | Inventory cycle, capex, margins, cash reserves and demand growth |
+| `capital_goods` | ROIC, asset productivity, inventory discipline and margin stability |
+| `consumer_staples` | Margin durability, cash conversion, FCF, inventory and shareholder returns |
+| `retail_discretionary` | Inventory productivity, asset turnover, sales growth and valuation |
+| `media_education` | Gross margin, operating leverage, growth, FCF and price-to-sales |
+| `oil_gas` | FCF, shareholder returns, leverage, capex discipline and incremental ROIC |
+| `utilities_renewables` | Debt service, leverage, capital intensity, cash conversion and FCF |
+| `materials_mining` | Cycle acceleration, ROIC, capex discipline, liquidity and shareholder returns |
 
 Every core scorecard contributes 95% of the final score; the common news layer contributes the remaining 5%.
 
@@ -176,8 +183,7 @@ Every core scorecard contributes 95% of the final score; the common news layer c
 | Price freshness | More than five trading days stale produces `Insufficient Data` |
 | Statement freshness | Statements older than 21 months produce `Insufficient Data` |
 | Operating-company gate | Negative book equity, or net debt/EBITDA above 6x with interest coverage below 1x, produces `Reject` |
-| Bank gate | Regulatory capital below the applicable minimum produces `Reject` |
-| Insurer gate | Solvency below the applicable minimum produces `Reject` |
+| Bank and insurer gate | Negative book equity produces `Reject` |
 | Biotechnology gate | Cash runway below 12 months produces `Reject` |
 
 ## Output variables

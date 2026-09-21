@@ -35,14 +35,13 @@ The same installer command downloads updates and reinstalls the model later.
 
 ## Interactive inputs
 
-Enter an exact Yahoo Finance ticker, the matching country code, an as-of date, and normally press Enter for automatic scorecard selection and no override.
+Enter an exact Yahoo Finance ticker, the matching country code, an as-of date, and press Enter for automatic detailed scorecard selection.
 
 ```text
 Stock ticker: 2330.TW
 Country: TW
 As-of date: 2026-09-20
 Scorecard: press Enter
-Override: press Enter
 ```
 
 ## Output

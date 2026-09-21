@@ -150,14 +150,13 @@ def _write_raw(workbook: Workbook, snapshot: InputSnapshot) -> None:
 
 def _write_sources(workbook: Workbook, snapshot: InputSnapshot) -> None:
     ws = workbook.create_sheet("Source Log")
-    ws.append(["Source", "Retrieval time", "Reporting period", "URL", "Override provenance"])
+    ws.append(["Source", "Retrieval time", "Reporting period", "URL"])
     for source in snapshot.source_log:
         ws.append([
             source.source,
             source.retrieval_time.isoformat(),
             source.reporting_period,
             source.url,
-            source.provenance,
         ])
     _header(ws)
     _fit(ws)

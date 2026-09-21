@@ -12,48 +12,11 @@ from .models import FactorResult, InputSnapshot, ScoreResult, ScorecardName
 from .transforms import piecewise_score
 
 
-REQUIRED_SPECIALIST_METRICS: dict[ScorecardName, set[str]] = {
-    "general": set(),
-    "technology": set(),
-    "healthcare": set(),
-    "financial_platform": set(),
-    "industrial": set(),
-    "consumer": set(),
-    "energy_materials": set(),
-    "bank": {
-        "roe",
-        "roa",
-        "efficiency_ratio",
-        "tangible_book_cagr_3y",
-        "cet1_buffer",
-        "npl_ratio",
-        "loan_loss_coverage",
-        "loan_to_deposit",
-    },
-    "insurer": {
-        "roe",
-        "combined_ratio",
-        "premium_growth",
-        "book_value_cagr_3y",
-        "solvency_buffer",
-        "debt_to_equity",
-        "reserve_coverage",
-    },
-    "biotech": {
-        "cash_runway_months",
-        "share_count_cagr",
-        "rd_to_opex",
-        "debt_to_cash",
-        "ev_to_rd",
-    },
-    "semiconductor": set(),
-    "memory_semiconductor": {"memory_contract_price_growth"},
+REQUIRED_SPECIALIST_METRICS: dict[str, set[str]] = {
+    name: set() for name in load_scorecards()
 }
 
-OPERATING_SCORECARDS = {
-    "general", "technology", "healthcare", "financial_platform", "industrial", "consumer",
-    "energy_materials", "semiconductor", "memory_semiconductor",
-}
+NON_FINANCIAL_SCORECARDS = set(REQUIRED_SPECIALIST_METRICS) - {"bank", "insurer", "biotech"}
 def classify(snapshot: InputSnapshot, requested: str = "auto") -> ScorecardName:
     return detect_classification(snapshot, requested).scorecard
 
@@ -75,22 +38,14 @@ def _month_age(period: date | None, as_of: date) -> int | None:
 def _risk_gates(snapshot: InputSnapshot, scorecard: ScorecardName) -> list[str]:
     m = snapshot.metrics
     gates: list[str] = []
-    if scorecard in OPERATING_SCORECARDS:
-        if m.get("book_equity") is not None and float(m["book_equity"]) < 0:
-            gates.append("Negative book equity")
+    if m.get("book_equity") is not None and float(m["book_equity"]) < 0:
+        gates.append("Negative book equity")
+    if scorecard in NON_FINANCIAL_SCORECARDS:
         leverage = m.get("net_debt_ebitda")
         coverage = m.get("interest_coverage")
         if leverage is not None and coverage is not None and leverage > 6 and coverage < 1:
             gates.append("Net debt/EBITDA exceeds 6x while interest coverage is below 1x")
-    elif scorecard == "bank":
-        buffer = m.get("cet1_buffer")
-        if buffer is not None and buffer < 0:
-            gates.append("CET1 capital is below the applicable regulatory minimum")
-    elif scorecard == "insurer":
-        buffer = m.get("solvency_buffer")
-        if buffer is not None and buffer < 0:
-            gates.append("Solvency capital is below the applicable regulatory minimum")
-    elif scorecard == "biotech":
+    if scorecard == "biotech":
         runway = m.get("cash_runway_months")
         if runway is not None and runway < 12:
             gates.append("Estimated cash runway is below 12 months")
@@ -149,7 +104,12 @@ def score_snapshot(snapshot: InputSnapshot, requested_scorecard: str = "auto") -
             )
         )
 
-    total = round(sum(f.contribution for f in factors), 4)
+    total = round(sum(
+        factor.score * factor.weight / 100.0 for factor in factors
+    ), 4)
+    contribution_residual = round(total - sum(f.contribution for f in factors), 4)
+    if factors and contribution_residual:
+        factors[-1].contribution = round(factors[-1].contribution + contribution_residual, 4)
     confidence = round(observed_weight, 2)
     risk_gates = _risk_gates(snapshot, scorecard)
     stale_days = _business_days_after(snapshot.last_price_date, snapshot.as_of)

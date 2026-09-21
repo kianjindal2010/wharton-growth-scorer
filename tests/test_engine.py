@@ -6,16 +6,10 @@ from growth_scorer.engine import classify, score_snapshot
 from growth_scorer.config import load_scorecards
 
 
-@pytest.mark.parametrize(
-    "scorecard",
-    [
-        "general", "technology", "healthcare", "financial_platform", "industrial", "consumer",
-        "energy_materials", "bank", "insurer", "biotech", "semiconductor", "memory_semiconductor",
-    ],
-)
+@pytest.mark.parametrize("scorecard", sorted(load_scorecards()))
 def test_synthetic_scorecards_are_complete_and_sum(scorecard, snapshot_factory):
     snapshot = snapshot_factory(scorecard, anchor_index=2)
-    requested = "auto"
+    requested = scorecard
     assert classify(snapshot, requested) == scorecard
     result = score_snapshot(snapshot, requested)
     assert result.score == pytest.approx(100)
@@ -27,12 +21,12 @@ def test_synthetic_scorecards_are_complete_and_sum(scorecard, snapshot_factory):
 @pytest.mark.parametrize(
     "industry,industry_key,summary,expected",
     [
-        ("Software - Infrastructure", "software-infrastructure", "Cloud software platform", "technology"),
-        ("Medical Devices", "medical-devices", "Makes surgical systems", "healthcare"),
-        ("Capital Markets", "capital-markets", "Operates an exchange", "financial_platform"),
-        ("Aerospace & Defense", "aerospace-defense", "Aircraft systems", "industrial"),
-        ("Internet Retail", "internet-retail", "Online retailer", "consumer"),
-        ("Specialty Chemicals", "specialty-chemicals", "Chemical producer", "energy_materials"),
+        ("Software - Infrastructure", "software-infrastructure", "Cloud software platform", "software_cloud"),
+        ("Medical Devices", "medical-devices", "Makes surgical systems", "medical_devices"),
+        ("Capital Markets", "capital-markets", "Operates an exchange", "asset_management"),
+        ("Aerospace & Defense", "aerospace-defense", "Aircraft systems", "aerospace_defense"),
+        ("Internet Retail", "internet-retail", "Online retailer", "retail_discretionary"),
+        ("Specialty Chemicals", "specialty-chemicals", "Chemical producer", "materials_mining"),
         ("Semiconductors", "semiconductors", "Produces DRAM, NAND and HBM", "memory_semiconductor"),
         ("Semiconductor Equipment & Materials", "semiconductor-equipment-materials", "Lithography", "semiconductor"),
     ],
@@ -49,7 +43,7 @@ def test_classification_reason_is_recorded(snapshot_factory):
         "general", industry="Internet Retail", industry_key="internet-retail",
     )
     result = score_snapshot(snapshot)
-    assert result.scorecard == "consumer"
+    assert result.scorecard == "retail_discretionary"
     assert result.classification_confidence == "high"
     assert "internet retail" in result.classification_reason.lower()
 
@@ -70,12 +64,12 @@ def test_missing_metrics_keep_neutral_weight_but_reduce_confidence(snapshot_fact
     [
         ("general", {"book_equity": -1}, "Negative book equity"),
         ("general", {"net_debt_ebitda": 7, "interest_coverage": 0.5}, "Net debt/EBITDA"),
-        ("bank", {"cet1_buffer": -0.001}, "CET1"),
-        ("insurer", {"solvency_buffer": -0.001}, "Solvency"),
+        ("bank", {"book_equity": -1}, "Negative book equity"),
+        ("insurer", {"book_equity": -1}, "Negative book equity"),
         ("biotech", {"cash_runway_months": 11}, "runway"),
     ],
 )
-def test_risk_gates_override_high_score(scorecard, changes, gate_text, snapshot_factory):
+def test_risk_gates_take_precedence_over_high_score(scorecard, changes, gate_text, snapshot_factory):
     result = score_snapshot(snapshot_factory(scorecard, 2, metric_changes=changes), scorecard)
     assert result.score >= 75
     assert result.verdict == "Reject"
@@ -142,10 +136,11 @@ def test_missing_statement_date_is_insufficient(snapshot_factory):
     assert "No valid financial statement date" in result.warnings
 
 
-def test_required_bank_metric_cannot_be_bypassed_by_total_confidence(snapshot_factory):
+def test_bank_model_uses_only_automated_metrics(snapshot_factory):
     snapshot = snapshot_factory("bank", 2)
-    snapshot.metrics["cet1_buffer"] = None
+    snapshot.metrics["equity_to_assets"] = None
     result = score_snapshot(snapshot, "bank")
     assert result.confidence >= 70
-    assert result.verdict == "Insufficient Data"
-    assert any("Required specialist metrics missing" in warning for warning in result.warnings)
+    assert not any("Required specialist metrics missing" in warning for warning in result.warnings)
+    factor = next(item for item in result.factors if item.metric == "equity_to_assets")
+    assert factor.score == 50

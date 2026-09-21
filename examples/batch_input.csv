@@ -1,4 +1,4 @@
-ticker,country,scorecard,overrides
-MSFT,US,auto,
-2330.TW,TW,auto,
-7203.T,JP,auto,
+ticker,country,scorecard
+MSFT,US,auto
+2330.TW,TW,auto
+7203.T,JP,auto

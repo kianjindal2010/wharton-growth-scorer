@@ -24,17 +24,12 @@ general:
 bank:
   - {pillar: Profitability, metric: roe, label: Return on equity, weight: 10, unit: "%", anchors: [0.00, 0.10, 0.20]}
   - {pillar: Profitability, metric: roa, label: Return on assets, weight: 7, unit: "%", anchors: [0.00, 0.01, 0.02]}
-  - {pillar: Profitability, metric: efficiency_ratio, label: Efficiency ratio, weight: 8, unit: "%", anchors: [0.80, 0.60, 0.40]}
   - {pillar: Growth, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 8, unit: "%", anchors: [-0.05, 0.08, 0.20]}
   - {pillar: Growth, metric: tangible_book_cagr_3y, label: Tangible-book CAGR, weight: 7, unit: "%", anchors: [-0.05, 0.06, 0.15]}
   - {pillar: Growth, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 5, unit: "%", anchors: [0.00, 0.08, 0.20]}
   - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 8, unit: "%", anchors: [0.00, 0.04, 0.08]}
   - {pillar: Valuation, metric: price_to_tangible_book, label: Price / tangible book, weight: 8, unit: "x", anchors: [3.00, 1.50, 0.80]}
   - {pillar: Valuation, metric: dividend_yield, label: Dividend yield, weight: 4, unit: "%", anchors: [0.00, 0.02, 0.05]}
-  - {pillar: Capital and asset quality, metric: cet1_buffer, label: CET1 buffer above minimum, weight: 8, unit: "% pts", anchors: [0.00, 0.03, 0.07]}
-  - {pillar: Capital and asset quality, metric: npl_ratio, label: Non-performing-loan ratio, weight: 6, unit: "%", anchors: [0.05, 0.02, 0.005]}
-  - {pillar: Capital and asset quality, metric: loan_loss_coverage, label: Loan-loss coverage, weight: 3, unit: "x", anchors: [0.50, 1.00, 1.80]}
-  - {pillar: Capital and asset quality, metric: loan_to_deposit, label: Loan / deposit, weight: 3, unit: "x", anchors: [1.20, 0.90, 0.70]}
   - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.60, 0.30, 0.15]}
   - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.70, -0.40, -0.20]}
   - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
@@ -43,7 +38,6 @@ bank:
 
 insurer:
   - {pillar: Profitability, metric: roe, label: Return on equity, weight: 10, unit: "%", anchors: [0.00, 0.10, 0.20]}
-  - {pillar: Profitability, metric: combined_ratio, label: Combined ratio, weight: 10, unit: "%", anchors: [1.05, 0.95, 0.85]}
   - {pillar: Profitability, metric: investment_income_stability, label: Investment-income variability, weight: 5, unit: "% stdev", anchors: [0.50, 0.20, 0.05]}
   - {pillar: Growth, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 8, unit: "%", anchors: [-0.05, 0.08, 0.20]}
   - {pillar: Growth, metric: book_value_cagr_3y, label: Book-value CAGR, weight: 7, unit: "%", anchors: [-0.05, 0.06, 0.15]}
@@ -51,9 +45,7 @@ insurer:
   - {pillar: Valuation, metric: earnings_yield, label: Earnings yield, weight: 8, unit: "%", anchors: [0.00, 0.04, 0.08]}
   - {pillar: Valuation, metric: price_to_book, label: Price / book, weight: 8, unit: "x", anchors: [3.00, 1.50, 0.80]}
   - {pillar: Valuation, metric: dividend_yield, label: Dividend yield, weight: 4, unit: "%", anchors: [0.00, 0.02, 0.05]}
-  - {pillar: Solvency, metric: solvency_buffer, label: Solvency buffer above minimum, weight: 10, unit: "% pts", anchors: [0.00, 0.03, 0.07]}
-  - {pillar: Solvency, metric: debt_to_equity, label: Debt / equity, weight: 5, unit: "x", anchors: [1.00, 0.50, 0.20]}
-  - {pillar: Solvency, metric: reserve_coverage, label: Reserve coverage, weight: 5, unit: "x", anchors: [0.90, 1.10, 1.30]}
+  - {pillar: Balance-sheet resilience, metric: debt_to_equity, label: Debt / equity, weight: 5, unit: "x", anchors: [1.00, 0.50, 0.20]}
   - {pillar: Market risk, metric: usd_volatility, label: Annualized USD volatility, weight: 4, unit: "%", anchors: [0.60, 0.30, 0.15]}
   - {pillar: Market risk, metric: max_drawdown, label: Maximum drawdown, weight: 4, unit: "%", anchors: [-0.70, -0.40, -0.20]}
   - {pillar: Market risk, metric: downside_beta, label: Downside beta, weight: 2, unit: "x", anchors: [1.80, 1.00, 0.60]}
@@ -121,7 +113,6 @@ memory_semiconductor:
   - {pillar: Cycle and earnings inflection, metric: inventory_days_change, label: Inventory-days change, weight: 4, unit: "days", anchors: [40.00, 0.00, -25.00]}
   - {pillar: Cycle and earnings inflection, metric: revenue_cagr_3y, label: Three-year revenue CAGR, weight: 3, unit: "%", anchors: [-0.10, 0.05, 0.20]}
   - {pillar: Cycle and earnings inflection, metric: eps_cagr_3y, label: Three-year EPS CAGR, weight: 3, unit: "%", anchors: [-0.20, 0.05, 0.25]}
-  - {pillar: Memory market cycle, metric: memory_contract_price_growth, label: Forecast DRAM contract-price growth, weight: 20, unit: "% QoQ", anchors: [-0.20, 0.00, 0.50]}
   - {pillar: Valuation, metric: price_to_sales, label: Price / sales, weight: 4, unit: "x", anchors: [12.00, 4.00, 1.50]}
   - {pillar: Valuation, metric: fcf_yield, label: Free-cash-flow yield, weight: 2, unit: "%", anchors: [0.00, 0.04, 0.10]}
   - {pillar: Valuation, metric: ebit_ev, label: EBIT / enterprise value, weight: 2, unit: "%", anchors: [0.00, 0.05, 0.12]}

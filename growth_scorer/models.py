@@ -4,12 +4,16 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 
 ScorecardName = Literal[
     "general", "technology", "healthcare", "financial_platform", "industrial", "consumer",
     "energy_materials", "bank", "insurer", "biotech", "semiconductor", "memory_semiconductor",
+    "software_cloud", "hardware_telecom", "pharmaceuticals", "medical_devices",
+    "payments_fintech", "asset_management", "aerospace_defense", "transportation_logistics",
+    "automotive", "capital_goods", "consumer_staples", "retail_discretionary",
+    "media_education", "oil_gas", "utilities_renewables", "materials_mining",
 ]
 
 
@@ -18,22 +22,6 @@ class SourceRecord(BaseModel):
     retrieval_time: datetime
     reporting_period: str | None = None
     url: str | None = None
-    provenance: str | None = None
-
-
-class OverrideRecord(BaseModel):
-    metric_name: str
-    value: float
-    unit: str | None = None
-    reporting_period: str | None = None
-    publication_date: date
-    source_url: str | None = None
-    verified_by: str
-
-    @field_validator("metric_name")
-    @classmethod
-    def normalize_metric(cls, value: str) -> str:
-        return value.strip().lower().replace(" ", "_").replace("-", "_")
 
 
 class InputSnapshot(BaseModel):

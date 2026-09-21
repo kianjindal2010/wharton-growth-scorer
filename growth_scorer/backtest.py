@@ -12,7 +12,6 @@ from . import __version__
 from .config import COUNTRIES
 from .data import _adjusted_close, _download, _to_usd, build_snapshot
 from .engine import score_snapshot
-from .overrides import apply_overrides, read_overrides
 
 
 def _return(series: pd.Series) -> float | None:
@@ -124,13 +123,6 @@ def run_backtest(
             else:
                 snapshot = build_snapshot(ticker, country, start)
                 snapshot.save(snapshot_path)
-            override_value = row.get("overrides")
-            if override_value is not None and not pd.isna(override_value) and str(override_value).strip():
-                override_path = Path(str(override_value).strip())
-                if not override_path.is_absolute():
-                    override_path = universe_path.parent / override_path
-                overrides, override_warnings = read_overrides(override_path, start)
-                apply_overrides(snapshot, overrides, override_warnings)
                 snapshot.save(snapshot_path)
             requested_scorecard = str(row.get("scorecard", "auto") or "auto").strip().lower()
             result = score_snapshot(snapshot, requested_scorecard)

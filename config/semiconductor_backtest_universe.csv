@@ -1,7 +1,7 @@
-ticker,country,company,segment,mandate,scorecard,overrides
-MU,US,Micron Technology,DRAM and HBM,Technology Communications and Digital Infrastructure,memory_semiconductor,overrides/memory_cycle_2026-03-20.csv
-000660.KS,KR,SK Hynix,DRAM and HBM,Technology Communications and Digital Infrastructure,memory_semiconductor,overrides/memory_cycle_2026-03-20.csv
-005930.KS,KR,Samsung Electronics,DRAM and diversified semiconductors,Technology Communications and Digital Infrastructure,memory_semiconductor,overrides/memory_cycle_2026-03-20.csv
-2408.TW,TW,Nanya Technology,DRAM,Technology Communications and Digital Infrastructure,memory_semiconductor,overrides/memory_cycle_2026-03-20.csv
-2344.TW,TW,Winbond Electronics,Specialty DRAM and flash,Technology Communications and Digital Infrastructure,memory_semiconductor,overrides/memory_cycle_2026-03-20.csv
-2330.TW,TW,Taiwan Semiconductor Manufacturing,Semiconductor foundry,Technology Communications and Digital Infrastructure,semiconductor,
+ticker,country,company,segment,mandate,scorecard
+MU,US,Micron Technology,DRAM and HBM,Technology Communications and Digital Infrastructure,memory_semiconductor
+000660.KS,KR,SK Hynix,DRAM and HBM,Technology Communications and Digital Infrastructure,memory_semiconductor
+005930.KS,KR,Samsung Electronics,DRAM and diversified semiconductors,Technology Communications and Digital Infrastructure,memory_semiconductor
+2408.TW,TW,Nanya Technology,DRAM,Technology Communications and Digital Infrastructure,memory_semiconductor
+2344.TW,TW,Winbond Electronics,Specialty DRAM and flash,Technology Communications and Digital Infrastructure,memory_semiconductor
+2330.TW,TW,Taiwan Semiconductor Manufacturing,Semiconductor foundry,Technology Communications and Digital Infrastructure,semiconductor

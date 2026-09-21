@@ -447,7 +447,7 @@ def build_report(payload_path: Path, enhanced_path: Path, semiconductor_path: Pa
     ]
     add_table(doc, ["Scorecard", "Use", "Pillar weights"], scorecard_rows, widths=[1.55, 2.35, 2.75], font_size=8.6)
     doc.add_paragraph(
-        "The memory-market-cycle pillar uses a verified point-in-time override. TrendForce published a 90–95% quarter-over-quarter conventional DRAM contract-price forecast on 2 February 2026. The model records the 92.5% midpoint, the publication date, direct source URL, and verifier. Because it is common industry information rather than company-specific alpha, it improves regime recognition but cannot by itself rank memory producers."
+        "The memory-semiconductor model is fully automated. It measures reported revenue acceleration, gross-margin change, inventory-days normalization, cash generation, valuation, R&D intensity, balance-sheet resilience, market risk, and relative momentum without an analyst-supplied cycle input."
     )
     doc.add_heading("Interpretation guardrail", level=2)
     doc.add_paragraph(
@@ -469,7 +469,7 @@ def build_report(payload_path: Path, enhanced_path: Path, semiconductor_path: Pa
 
     doc.add_heading("Recommended next steps", level=1)
     recommendations = [
-        ("Add verified specialist data", "Prepare override workbooks for banks and insurers before comparing them with general companies."),
+        ("Audit automated data gaps", "Review confidence and missing-field warnings before comparing banks, insurers, and operating companies."),
         ("Build a true point-in-time feed", "Use SEC and local-regulator filing timestamps so each historical run includes only information publicly available on that date."),
         ("Expand the time series", "Repeat the test at monthly or quarterly starting dates over at least five years and evaluate rolling one-, three-, six-, and twelve-month outcomes."),
         ("Use sector-aware comparisons", "Compare ranks within the same scorecard and sector before interpreting absolute score differences."),
@@ -508,7 +508,7 @@ def build_report(payload_path: Path, enhanced_path: Path, semiconductor_path: Pa
 
     doc.add_heading("Data sources", level=1)
     doc.add_paragraph("Yahoo Finance historical prices, adjusted prices, corporate actions, benchmark series, FX series, and available financial statements: https://finance.yahoo.com")
-    doc.add_paragraph("TrendForce, 2 February 2026, DRAM and NAND Flash contract-price forecast used as the dated memory-cycle override: https://www.trendforce.com/presscenter/news/20260202-12911.html")
+    doc.add_paragraph("Yahoo Finance company profiles, statements, prices, benchmarks, exchange rates, and timestamped news were used for automated scoring inputs.")
     doc.add_paragraph("Micron Technology investor relations, 18 March 2026, fiscal Q2 2026 prepared remarks used as qualitative cycle-context validation: https://investors.micron.com/static-files/e089f8c0-065d-47b8-9d02-bfa863cdb357")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)

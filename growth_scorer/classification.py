@@ -32,43 +32,56 @@ MEMORY_TERMS = (
 )
 
 INDUSTRY_ROUTES: dict[ScorecardName, tuple[str, ...]] = {
-    "energy_materials": (
-        "oil gas", "energy", "uranium", "coal", "coking coal", "steel", "copper", "gold",
-        "silver", "aluminum", "mining", "metals", "chemicals", "specialty chemicals",
-        "agricultural inputs", "building materials", "paper", "lumber", "utilities",
-        "regulated electric", "regulated gas", "regulated water", "renewable utilities",
+    "oil_gas": ("oil gas", "energy", "uranium", "coal", "coking coal", "oilfield services"),
+    "utilities_renewables": (
+        "utilities", "regulated electric", "regulated gas", "regulated water", "renewable utilities",
         "independent power", "solar",
     ),
-    "healthcare": (
-        "drug manufacturers", "pharmaceutical", "medical devices", "medical instruments",
-        "diagnostics research", "medical laboratories", "healthcare plans", "health information",
-        "medical care facilities", "medical distribution", "healthcare services", "dental",
+    "materials_mining": (
+        "steel", "copper", "gold", "silver", "aluminum", "mining", "metals", "chemicals",
+        "specialty chemicals", "agricultural inputs", "building materials", "paper", "lumber",
     ),
-    "financial_platform": (
-        "asset management", "capital markets", "financial exchanges", "credit services",
-        "payment", "fintech", "broker", "investment banking", "wealth management",
-        "financial data", "mortgage real estate investment trust",
+    "pharmaceuticals": ("drug manufacturers", "pharmaceutical", "diagnostics research"),
+    "medical_devices": (
+        "medical devices", "medical instruments", "medical laboratories", "medical distribution", "dental",
     ),
-    "industrial": (
-        "aerospace defense", "airlines", "airports air services", "auto manufacturers",
-        "auto parts", "farm heavy construction machinery", "specialty industrial machinery",
-        "industrial distribution", "engineering construction", "infrastructure operations",
-        "building products equipment", "railroads", "trucking", "marine shipping", "integrated freight",
-        "logistics", "rental leasing", "tools accessories", "electrical equipment supplies",
+    "healthcare": ("healthcare plans", "health information", "medical care facilities", "healthcare services"),
+    "payments_fintech": ("credit services", "payment", "fintech", "financial data", "financial exchanges"),
+    "asset_management": (
+        "asset management", "capital markets", "broker", "investment banking", "wealth management",
+        "mortgage real estate investment trust",
+    ),
+    "aerospace_defense": ("aerospace defense",),
+    "transportation_logistics": (
+        "airlines", "airports air services", "railroads", "trucking", "marine shipping",
+        "integrated freight", "logistics",
+    ),
+    "automotive": ("auto manufacturers", "auto parts"),
+    "capital_goods": (
+        "farm heavy construction machinery", "specialty industrial machinery", "industrial distribution",
+        "engineering construction", "infrastructure operations", "building products equipment",
+        "rental leasing", "tools accessories", "electrical equipment supplies",
         "pollution treatment controls", "waste management", "security protection services",
     ),
-    "consumer": (
-        "retail", "apparel", "footwear", "luxury goods", "restaurants", "grocery stores",
-        "discount stores", "department stores", "household personal products", "packaged foods",
-        "beverages", "tobacco", "lodging", "travel services", "resorts casinos", "leisure",
-        "entertainment", "broadcasting", "publishing", "advertising agencies", "education training",
-        "internet retail", "consumer electronics", "residential construction", "furnishings",
+    "consumer_staples": (
+        "grocery stores", "household personal products", "packaged foods", "beverages", "tobacco",
     ),
-    "technology": (
+    "retail_discretionary": (
+        "retail", "apparel", "footwear", "luxury goods", "restaurants", "discount stores",
+        "department stores", "internet retail", "consumer electronics", "residential construction",
+        "furnishings", "lodging", "travel services", "resorts casinos", "leisure",
+    ),
+    "media_education": (
+        "entertainment", "broadcasting", "publishing", "advertising agencies", "education training",
+        "internet content information",
+    ),
+    "software_cloud": (
         "software application", "software infrastructure", "information technology services",
+        "data center", "cloud computing", "cybersecurity",
+    ),
+    "hardware_telecom": (
         "computer hardware", "electronic components", "communication equipment", "telecom services",
-        "internet content information", "scientific technical instruments", "data center",
-        "cloud computing", "cybersecurity", "business equipment supplies",
+        "scientific technical instruments", "business equipment supplies",
     ),
 }
 
@@ -105,6 +118,10 @@ def detect_classification(snapshot: InputSnapshot, requested: str = "auto") -> C
     valid = {
         "general", "technology", "healthcare", "financial_platform", "industrial", "consumer",
         "energy_materials", "bank", "insurer", "biotech", "semiconductor", "memory_semiconductor",
+        "software_cloud", "hardware_telecom", "pharmaceuticals", "medical_devices",
+        "payments_fintech", "asset_management", "aerospace_defense", "transportation_logistics",
+        "automotive", "capital_goods", "consumer_staples", "retail_discretionary",
+        "media_education", "oil_gas", "utilities_renewables", "materials_mining",
     }
     if requested != "auto":
         if requested not in valid:

@@ -12,8 +12,7 @@ from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
 from .data import build_snapshot
-from .engine import classify, score_snapshot
-from .overrides import apply_overrides, discover_override, read_overrides
+from .engine import score_snapshot
 from .reporting import write_json, write_workbook
 from .storage import record_and_rank
 from .validation import SCORECARDS, safe_name, validate_ticker_country
@@ -31,14 +30,12 @@ class BatchItem:
     ticker: str
     country: str
     scorecard: str = "auto"
-    overrides: Path | None = None
 
     def normalized(self) -> "BatchItem":
         return BatchItem(
             ticker=self.ticker.strip().upper(),
             country=self.country.strip().upper(),
             scorecard=(self.scorecard or "auto").strip().lower(),
-            overrides=self.overrides,
         )
 
 
@@ -57,15 +54,10 @@ def read_batch_csv(path: Path) -> list[BatchItem]:
                 continue
             if not row.get("ticker") or not row.get("country"):
                 raise ValueError(f"Batch CSV row {row_number} must contain ticker and country")
-            override_value = row.get("overrides", "").strip('"')
-            override_path = Path(override_value) if override_value else None
-            if override_path and not override_path.is_absolute():
-                override_path = path.parent / override_path
             items.append(BatchItem(
                 ticker=row["ticker"],
                 country=row["country"],
                 scorecard=row.get("scorecard") or "auto",
-                overrides=override_path,
             ).normalized())
     if not items:
         raise ValueError("Batch CSV contains no companies")
@@ -168,7 +160,7 @@ def _write_batch_workbook(path: Path, payload: dict[str, Any]) -> None:
         ("Comparison", "Rank companies only inside the same scorecard; different scorecards are not directly comparable."),
         ("Rank", "A rank is meaningful only when at least two successful companies use the same scorecard."),
         ("Detailed evidence", "Open each company workbook for factor scores, raw data, sources, warnings, and risk gates."),
-        ("Failures", "A failed company does not stop the rest of the batch. Correct its ticker, country, data, or override and rerun it."),
+        ("Failures", "A failed company does not stop the rest of the batch. Correct its ticker, country, or data issue and rerun it."),
         ("Decision rule", "This is a research consistency tool, not a return forecast or instruction to trade."),
     ]
     for row in guidance:
@@ -186,7 +178,6 @@ def run_batch(
     output_dir: Path,
     data_dir: Path,
     history_db: Path,
-    overrides_dir: Path | None = None,
 ) -> tuple[Path, Path, dict[str, Any]]:
     items = _validate_items(items)
     started = datetime.now().astimezone()
@@ -203,15 +194,6 @@ def run_batch(
             if item.scorecard not in SCORECARDS:
                 raise ValueError(f"Unknown scorecard: {item.scorecard}")
             snapshot = build_snapshot(item.ticker, item.country, as_of)
-            detected_scorecard = classify(snapshot, item.scorecard)
-            override_path = item.overrides or discover_override(overrides_dir, item.ticker, detected_scorecard)
-            if override_path:
-                records, warnings = read_overrides(override_path, as_of)
-                apply_overrides(snapshot, records, warnings)
-                if item.overrides is None:
-                    snapshot.warnings.append(
-                        f"Automatically applied ticker-specific verified overrides: {override_path}"
-                    )
             ticker_name = safe_name(snapshot.ticker)
             frozen_path = data_dir / ticker_name / f"{as_of.isoformat()}.json"
             snapshot.save(frozen_path)

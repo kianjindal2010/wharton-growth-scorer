@@ -17,18 +17,17 @@ def test_batch_parser_accepts_csv_mode(tmp_path):
     assert args.as_of == date(2026, 9, 20)
 
 
-def test_read_batch_csv_supports_optional_fields_and_relative_override(tmp_path):
+def test_read_batch_csv_supports_optional_scorecard(tmp_path):
     path = tmp_path / "stocks.csv"
     path.write_text(
-        "ticker,country,scorecard,overrides\n"
-        "msft,us,auto,\n"
-        "2330.tw,tw,semiconductor,inputs/tsmc.xlsx\n",
+        "ticker,country,scorecard\n"
+        "msft,us,auto\n"
+        "2330.tw,tw,semiconductor\n",
         encoding="utf-8",
     )
     items = read_batch_csv(path)
-    assert items[0] == BatchItem("MSFT", "US", "auto", None)
+    assert items[0] == BatchItem("MSFT", "US", "auto")
     assert items[1].ticker == "2330.TW"
-    assert items[1].overrides == tmp_path / "inputs/tsmc.xlsx"
 
 
 def test_batch_creates_summary_and_individual_reports(tmp_path, snapshot_factory, monkeypatch):

@@ -155,7 +155,7 @@ def build(path: Path):
     title = doc.add_paragraph(style="Title")
     title.add_run("Wharton Growth Scorer Results and User Guide")
     subtitle = doc.add_paragraph()
-    set_font(subtitle.add_run("Version 0.4.1 for the equity growth sleeve"), size=13, bold=True)
+    set_font(subtitle.add_run("Version 0.7.0 for the equity growth sleeve"), size=13, bold=True)
     metadata = doc.add_paragraph()
     set_font(metadata.add_run("Prepared for the Wharton Global High School Investment Competition team\n"), size=9.5, bold=True)
     set_font(metadata.add_run("Repository  github.com/kianjindal2010/wharton-growth-scorer"), size=9.5)
@@ -181,7 +181,10 @@ def build(path: Path):
         "The test used 18 companies across the United States, Japan, the United Kingdom, India, and Taiwan from 20 March to 18 September 2026. Thirteen companies had sufficient data for an actionable verdict. The results support using the model as a structured ranking and research tool, but the sample is too small and the period too short to prove forecasting ability."
     )
     doc.add_paragraph(
-        "A separate six-stock semiconductor diagnostic tested Micron, SK Hynix, Samsung, Nanya, Winbond, and TSMC. It showed that memory producers need a cycle-aware scorecard that recognizes DRAM pricing, margin inflection, inventories, and shorter-term momentum. That redesign was informed by the same outcome and therefore still requires walk-forward testing."
+        "These figures describe the earlier broad sector-aware model. Version 0.7.0 introduces 28 detailed automated scorecards and must be evaluated in a new out-of-sample backtest before its performance is compared with the earlier results."
+    )
+    doc.add_paragraph(
+        "A separate six-stock semiconductor diagnostic tested Micron, SK Hynix, Samsung, Nanya, Winbond, and TSMC. It showed that memory producers need a cycle-aware scorecard that recognizes reported revenue acceleration, margin inflection, inventories, cash generation, and shorter-term momentum. That redesign was informed by the same outcome and therefore still requires walk-forward testing."
     )
 
     doc.add_heading("What the model does", level=1)
@@ -198,7 +201,6 @@ def build(path: Path):
         8.7,
     )
 
-    doc.add_page_break()
     doc.add_heading("Variables considered", level=1)
     doc.add_paragraph("The selected scorecard determines which variables receive weight. Missing metrics receive a neutral score of 50 and reduce confidence; their weights are not redistributed.")
     variable_rows = [
@@ -209,31 +211,32 @@ def build(path: Path):
         ["Valuation", "FCF, EBIT, earnings and shareholder yields; price to sales, book, and tangible book"],
         ["Financial strength", "Net debt to EBITDA, interest coverage, liquidity, cash to debt, debt to equity, and asset turnover"],
         ["Investment and innovation", "R&D intensity and growth, capex intensity, incremental ROIC, and revenue growth relative to capex"],
-        ["Specialist factors", "Bank capital and asset quality, insurer solvency and reserves, biotechnology runway and dilution, and DRAM contract pricing"],
+        ["Specialist factors", "Automated bank and insurer resilience, biotechnology runway and dilution, and memory-cycle revenue, margin, inventory, and momentum signals"],
         ["News", "30-day sentiment, 30-versus-90-day trend, coverage quality, relevance, source quality, and recency"],
     ]
     add_table(doc, ["Variable group", "Examples"], variable_rows, [1.55, 5.0], 8.7)
 
     doc.add_heading("Sector aware scorecards", level=1)
     doc.add_paragraph(
-        "The automatic classifier selects among general, technology, healthcare, financial platform, industrial, consumer, energy and materials, bank, insurer, pre-profit biotechnology, semiconductor, and memory-semiconductor scorecards. This prevents one set of assumptions from being applied to economically different businesses. Core financial and market factors contribute 95 percent of the score; the common news layer contributes 5 percent."
+        "The automatic classifier selects among 28 broad and detailed models, including software and cloud, hardware and telecom, pharmaceuticals, medical devices, payments and fintech, asset management, aerospace and defense, logistics, automotive, capital goods, staples, retail, media and education, oil and gas, utilities and renewables, materials and mining, banks, insurers, biotechnology, and semiconductor models. Core financial and market factors contribute 95 percent of the score; the common news layer contributes 5 percent."
     )
 
     doc.add_heading("How the data is sourced", level=1)
     source_rows = [
         ["Yahoo Finance", "Adjusted OHLCV, dividends, splits, available annual and quarterly statements, company classification, benchmarks, FX rates, and recent news"],
-        ["Verified overrides", "Regulatory or company filings for metrics not reliably supplied by Yahoo Finance, including CET1, solvency, reserves, and specialist cycle data"],
-        ["Analyst controls", "Exact ticker, country, as-of date, manual scorecard override when justified, source URL, publication date, and verifier"],
+        ["Automated statements", "Annual and quarterly profitability, growth, valuation, balance-sheet, capital-intensity, inventory, and funding calculations"],
+        ["Analyst controls", "Exact ticker, country, as-of date, and optional manual scorecard selection when justified"],
     ]
     add_table(doc, ["Source", "Use"], source_rows, [1.45, 5.1], 8.8)
-    doc.add_paragraph(
+    cutoff_paragraph = doc.add_paragraph(
         "Every run applies an information cutoff. Prices and statement periods after the as-of date are excluded. News must have a publication timestamp on or before that date, mention the company or ticker, and survive duplicate filtering. If historical Yahoo Finance news is unavailable, news remains neutral instead of using current headlines."
     )
+    cutoff_paragraph.paragraph_format.keep_together = True
 
     doc.add_heading("Risk controls", level=1)
     add_bullet(doc, "Confidence  ", "Below 70 percent produces Insufficient Data.")
     add_bullet(doc, "Freshness  ", "Prices more than five trading days stale or statements more than 21 months old produce Insufficient Data.")
-    add_bullet(doc, "Risk gates  ", "Negative equity, severe leverage, inadequate regulatory capital, inadequate solvency, or biotechnology runway below 12 months can override the numerical score.")
+    add_bullet(doc, "Risk gates  ", "Negative equity, severe leverage for operating companies, or biotechnology runway below 12 months can supersede the numerical score.")
 
     doc.add_heading("Installation", level=1)
     doc.add_paragraph(
@@ -253,7 +256,6 @@ def build(path: Path):
         ["Country", "Matching market code", "US, JP, GB, IN, TW, KR"],
         ["As-of date", "YYYY-MM-DD or Enter for today", "2026-09-20"],
         ["Scorecard", "Press Enter for automatic selection", "auto"],
-        ["Override", "Press Enter unless a verified specialist file exists", "Optional XLSX or CSV path"],
     ]
     add_table(doc, ["Prompt", "Required format", "Example"], prompt_rows, [1.25, 2.45, 2.85], 8.6)
 
@@ -268,7 +270,7 @@ def build(path: Path):
         ["Summary", "Overall score, verdict, confidence, scorecard, rank, risk gates, and pillar scores"],
         ["Factor Breakdown", "Every variable, raw value, anchor transformation, weight, contribution, observation status, and source"],
         ["Raw Data", "Prices, statements, FX data, benchmark data, news records, and calculated metrics"],
-        ["Source Log", "Source, retrieval time, reporting period, URL, and override provenance"],
+        ["Source Log", "Source, retrieval time, reporting period, and URL"],
         ["Warnings", "Missing information, stale fields, clipping, classification concerns, and triggered gates"],
     ]
     add_table(doc, ["Worksheet", "Contents"], output_rows, [1.55, 5.0], 8.8)

@@ -384,6 +384,9 @@ def _statement_metrics(
         "capex_to_sales": capex_intensity,
         "roe": safe_div(net_income, equity),
         "roa": safe_div(net_income, assets),
+        "net_margin": safe_div(net_income, revenue),
+        "equity_to_assets": safe_div(equity, assets),
+        "asset_growth": None,
         "tangible_book_cagr_3y": _growth(tangible_values),
         "book_value_cagr_3y": _growth(_row(balance, "equity")),
         "price_to_tangible_book": safe_div(market_cap, tangible_values[-1][1]) if tangible_values else None,
@@ -408,6 +411,10 @@ def _statement_metrics(
         metrics["latest_revenue_growth"] = revenues[-1][1] / revenues[-2][1] - 1
         if capex_intensity not in (None, 0):
             metrics["revenue_growth_to_capex"] = metrics["latest_revenue_growth"] / capex_intensity
+
+    asset_values = _row(balance, "assets")
+    if len(asset_values) >= 2 and asset_values[-2][1] != 0:
+        metrics["asset_growth"] = asset_values[-1][1] / asset_values[-2][1] - 1
 
     equity_by_date = dict(_row(balance, "equity"))
     debt_by_date = dict(_row(balance, "debt"))

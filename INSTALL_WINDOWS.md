@@ -55,7 +55,7 @@ To use the shorter `wharton predict` command in the same PowerShell window, acti
 wharton predict
 ```
 
-The program asks for the exact Yahoo Finance ticker, country, scoring date, scorecard, and an optional verified-override workbook. Select `auto` for the normal sector-aware workflow. It then creates an Excel report, JSON result, frozen snapshot, and local history database, including the timestamp-filtered Yahoo Finance news factors when eligible articles are available.
+The program asks for the exact Yahoo Finance ticker, country, scoring date, and scorecard. Select `auto` for detailed industry detection. It then creates an Excel report, JSON result, frozen snapshot, and local history database, including timestamp-filtered Yahoo Finance news factors when eligible articles are available.
 
 ## Command line installation
 
@@ -84,7 +84,7 @@ git pull
 - **Ticker not found:** verify the exact ticker on Yahoo Finance, including suffixes such as `.TW`, `.T`, `.L`, or `.NS`.
 - **`py` is not recognized:** reinstall Python and enable the PATH option.
 - **`wharton` is not recognized:** use `.\.venv\Scripts\wharton.exe predict` or run `run_wharton.bat`.
-- **Insufficient Data:** add verified regulatory metrics using an override workbook. This is expected for many banks, insurers, and pre-profit biotechnology companies.
+- **Insufficient Data:** review the Warnings sheet. The program applies neutral scores to unavailable fields and lowers confidence automatically.
 - **No historical news:** Yahoo Finance usually provides only recent headlines. The scorer correctly leaves historical news neutral rather than using present-day stories in an earlier run.
 - **Network error:** retry later and confirm that Yahoo Finance is reachable.
 
