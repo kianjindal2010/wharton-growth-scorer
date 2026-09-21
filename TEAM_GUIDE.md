@@ -26,7 +26,7 @@ Yahoo Finance ticker (example 2330.TW): 2330.TW
 Country code [US, JP, GB, IN, TW, KR]: TW
 As-of date YYYY-MM-DD [today]:
 Scorecard [auto/general/technology/healthcare/financial_platform/industrial/consumer/energy_materials/bank/insurer/biotech/semiconductor/memory_semiconductor] [auto]:
-Verified override workbook path [press Enter to skip]:
+Verified override workbook [Enter to auto-search the overrides folder]:
 ```
 
 ## Automated example
@@ -75,7 +75,7 @@ The `scorecard` and `overrides` fields may be blank. If an override path is rela
 
 ## Semiconductor scorecards
 
-Use `semiconductor` for long-term analysis of foundries, chip designers, equipment suppliers, and diversified semiconductor firms. Use `memory_semiconductor` only for DRAM, HBM, and memory manufacturers when a dated, verified memory-pricing override is available. The memory scorecard emphasizes earnings-cycle inflection and is intended for a six-to-twelve-month tactical research horizon.
+The automatic detector uses Yahoo's detailed industry key and company description. It selects `semiconductor` for foundries, chip designers, equipment suppliers, and diversified semiconductor firms. It selects `memory_semiconductor` when the semiconductor profile also identifies DRAM, HBM, NAND, flash, or memory-chip operations. The memory scorecard still requires a dated, verified memory-pricing input and emphasizes a six-to-twelve-month tactical research horizon.
 
 The included 20 March 2026 memory override is a historical backtest input. Do not reuse it for a current score. For each new scoring date, verify and document the latest industry forecast that was public by that date.
 
@@ -90,7 +90,7 @@ The included 20 March 2026 memory override is a historical backtest input. Do no
 | Consumer, media and education | Consumer | Brand economics, gross margin, inventory turnover, cash conversion and valuation |
 | Energy, utilities, materials and climate transition | Energy/materials | Cash returns, leverage, capital discipline, cyclicality and shareholder yield |
 
-Use `auto` unless an analyst has documented why a manual override is more appropriate.
+Use `auto` unless an analyst has documented why a manual scorecard is more appropriate. Review the classification reason in the Summary sheet.
 
 ## News sentiment
 
@@ -112,7 +112,7 @@ Use the columns below exactly. Rows without a verifier or with a publication dat
 | Source URL | Direct regulatory or company filing link |
 | Verified by | Team member who checked the value |
 
-Bank CET1, insurer solvency and reserves, and biotechnology-specific measures normally require overrides. Missing values receive a neutral metric score but reduce confidence; weights are never redistributed.
+Verified overrides work with every industry. Put an exact ticker file such as `MSFT.xlsx` in `Documents\Wharton Growth Scorer\overrides`, or organize it under the automatically detected scorecard, such as `overrides\technology\MSFT.xlsx`. The model detects the scorecard first and then applies the matching ticker file. Explicit paths still take precedence. Bank CET1, insurer solvency and reserves, biotechnology-specific measures, and memory pricing normally require overrides. Missing values receive a neutral metric score but reduce confidence; weights are never redistributed.
 
 ## Reading the verdict
 

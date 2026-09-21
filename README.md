@@ -45,13 +45,13 @@ curl -fsSL https://raw.githubusercontent.com/kianjindal2010/wharton-growth-score
 
 Then run `wharton predict`. Detailed macOS instructions are in [INSTALL_MAC.md](INSTALL_MAC.md).
 
-The interactive command asks for the ticker, country, as-of date, scorecard, and optional verified override workbook. `auto` selects a sector-aware scorecard for technology, profitable healthcare, financial platforms, industrials, consumer/media, energy/materials/utilities, banks, insurers, pre-profit biotech, or semiconductors. Experienced users can supply everything in one command:
+The interactive command asks for the ticker, country, as-of date, scorecard, and optional verified override workbook. `auto` examines Yahoo's sector, sector key, industry, industry key, and company description. It then selects the technology, profitable healthcare, financial-platform, industrial, consumer/media, energy/materials/utilities, bank, insurer, pre-profit biotech, semiconductor, or memory-semiconductor scorecard. The Excel Summary sheet records the classification confidence and the exact matching reason. Experienced users can supply everything in one command:
 
 ```powershell
 wharton predict --ticker 2330.TW --country TW --as-of 2026-09-20 --scorecard auto
 ```
 
-Add `--overrides optional_overrides.xlsx` for verified filing data, or `--snapshot path.json` to reproduce a frozen run without downloading new data.
+Add `--overrides optional_overrides.xlsx` for verified filing data, or `--snapshot path.json` to reproduce a frozen run without downloading new data. If `--overrides` is omitted, the model automatically searches the shared overrides folder after detecting the scorecard.
 
 Each run writes a five-sheet Excel workbook, a JSON result, a frozen input snapshot, and a row in `data/score_history.sqlite3`. Default output is under `output/scores/<as-of>/`.
 
@@ -111,6 +111,19 @@ Each batch creates:
 
 Batch ranks compare only companies that resolved to the same scorecard. A rank is intentionally marked “Not meaningful” when fewer than two companies share that scorecard. One failed ticker does not stop the rest of the batch. Default batch output is stored under `Documents\Wharton Growth Scorer\output\batches\YYYY-MM-DD\batch_TIMESTAMP\`.
 
+## Automatic verified overrides for every industry
+
+Verified overrides are supported for every scorecard, not only semiconductors. Store an exact ticker-specific `.xlsx` or `.csv` file in either location:
+
+```text
+Documents\Wharton Growth Scorer\overrides\MSFT.xlsx
+Documents\Wharton Growth Scorer\overrides\technology\MSFT.xlsx
+```
+
+After downloading the company profile, the model detects the industry and searches both the main overrides folder and the detected scorecard subfolder. This works for technology, healthcare, financial platforms, industrials, consumer, energy/materials, banks, insurers, biotech, semiconductors, and general companies. The filename must be the exact Yahoo ticker, including exchange suffixes such as `2330.TW.xlsx`.
+
+An explicit `--overrides` path always takes precedence. If more than one automatic file matches, the run stops for that ticker and reports the ambiguity. Publication dates after the scoring date and rows without `Verified by` remain blocked. Automatic discovery chooses the correct file; it never invents filing values.
+
 Run the included multi-market historical comparison with:
 
 ```powershell
@@ -149,7 +162,7 @@ Only rows with a non-empty `Verified by` field and a publication date on or befo
 
 ## Important limitations
 
-- Yahoo Finance is a convenience data source, not a regulatory filing system. Bank capital, insurer solvency/reserves, and biotechnology-specific data will usually require verified overrides.
+- Yahoo Finance is a convenience data source, not a regulatory filing system. Bank capital, insurer solvency/reserves, biotechnology-specific data, and industry-cycle inputs may require verified overrides.
 - Yahoo Finance normally exposes a recent news window, not a complete historical archive. Historical scores must never substitute present-day headlines for missing point-in-time news.
 - The model is a research consistency tool, not a prediction of returns or a substitute for investment judgment.
 - The memory scorecard is a tactical six-to-twelve-month cyclical screen. Its first reported improvement is in-sample and requires walk-forward validation before portfolio use.

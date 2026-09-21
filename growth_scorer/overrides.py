@@ -19,6 +19,31 @@ REQUIRED_COLUMNS = {
 }
 
 
+def discover_override(root: Path | None, ticker: str, scorecard: str) -> Path | None:
+    """Find one exact ticker-specific verified override after automatic classification."""
+    if root is None or not root.exists():
+        return None
+    safe_ticker = "".join(character if character.isalnum() or character in "._-" else "_" for character in ticker)
+    stems = {
+        safe_ticker.lower(),
+        f"{scorecard}_{safe_ticker}".lower(),
+        f"{safe_ticker}_{scorecard}".lower(),
+    }
+    candidates: list[Path] = []
+    search_directories = [root, root / scorecard]
+    for directory in search_directories:
+        if not directory.is_dir():
+            continue
+        for path in directory.iterdir():
+            if path.is_file() and path.suffix.lower() in {".csv", ".xlsx"} and path.stem.lower() in stems:
+                candidates.append(path)
+    unique = sorted({path.resolve() for path in candidates}, key=lambda path: str(path).lower())
+    if len(unique) > 1:
+        names = ", ".join(str(path) for path in unique)
+        raise ValueError(f"Multiple automatic override files match {ticker}: {names}")
+    return unique[0] if unique else None
+
+
 def read_overrides(path: Path, as_of: date) -> tuple[list[OverrideRecord], list[str]]:
     frame = pd.read_csv(path) if path.suffix.lower() == ".csv" else pd.read_excel(path)
     normalized = {str(column).strip().lower(): column for column in frame.columns}

@@ -43,7 +43,12 @@ class InputSnapshot(BaseModel):
     retrieved_at: datetime
     company_name: str | None = None
     sector: str | None = None
+    sector_key: str | None = None
     industry: str | None = None
+    industry_key: str | None = None
+    business_summary: str | None = None
+    quote_type: str | None = None
+    exchange: str | None = None
     currency: str | None = None
     prices: list[dict[str, Any]] = Field(default_factory=list)
     benchmark_prices: list[dict[str, Any]] = Field(default_factory=list)
@@ -88,6 +93,8 @@ class ScoreResult(BaseModel):
     country: str
     as_of: date
     scorecard: ScorecardName
+    classification_confidence: str = ""
+    classification_reason: str = ""
     score: float
     verdict: str
     confidence: float

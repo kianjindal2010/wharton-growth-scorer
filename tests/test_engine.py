@@ -15,13 +15,43 @@ from growth_scorer.config import load_scorecards
 )
 def test_synthetic_scorecards_are_complete_and_sum(scorecard, snapshot_factory):
     snapshot = snapshot_factory(scorecard, anchor_index=2)
-    requested = scorecard if scorecard == "memory_semiconductor" else "auto"
+    requested = "auto"
     assert classify(snapshot, requested) == scorecard
     result = score_snapshot(snapshot, requested)
     assert result.score == pytest.approx(100)
     assert result.confidence == 100
     assert result.verdict == "Buy Candidate"
     assert sum(item.contribution for item in result.factors) == pytest.approx(result.score)
+
+
+@pytest.mark.parametrize(
+    "industry,industry_key,summary,expected",
+    [
+        ("Software - Infrastructure", "software-infrastructure", "Cloud software platform", "technology"),
+        ("Medical Devices", "medical-devices", "Makes surgical systems", "healthcare"),
+        ("Capital Markets", "capital-markets", "Operates an exchange", "financial_platform"),
+        ("Aerospace & Defense", "aerospace-defense", "Aircraft systems", "industrial"),
+        ("Internet Retail", "internet-retail", "Online retailer", "consumer"),
+        ("Specialty Chemicals", "specialty-chemicals", "Chemical producer", "energy_materials"),
+        ("Semiconductors", "semiconductors", "Produces DRAM, NAND and HBM", "memory_semiconductor"),
+        ("Semiconductor Equipment & Materials", "semiconductor-equipment-materials", "Lithography", "semiconductor"),
+    ],
+)
+def test_detailed_industry_detection(industry, industry_key, summary, expected, snapshot_factory):
+    snapshot = snapshot_factory(
+        "general", industry=industry, industry_key=industry_key, business_summary=summary,
+    )
+    assert classify(snapshot) == expected
+
+
+def test_classification_reason_is_recorded(snapshot_factory):
+    snapshot = snapshot_factory(
+        "general", industry="Internet Retail", industry_key="internet-retail",
+    )
+    result = score_snapshot(snapshot)
+    assert result.scorecard == "consumer"
+    assert result.classification_confidence == "high"
+    assert "internet retail" in result.classification_reason.lower()
 
 
 def test_missing_metrics_keep_neutral_weight_but_reduce_confidence(snapshot_factory):

@@ -25,7 +25,7 @@ def metrics_at(scorecard: str, anchor_index: int = 1) -> dict[str, float]:
 def snapshot_factory():
     def factory(scorecard: str = "general", anchor_index: int = 1, **changes):
         industries = {
-            "general": "Software - Infrastructure",
+            "general": "Conglomerates",
             "bank": "Banks - Diversified",
             "insurer": "Insurance - Property & Casualty",
             "biotech": "Biotechnology",
@@ -63,8 +63,8 @@ def snapshot_factory():
             as_of=changes.pop("as_of", date(2026, 9, 20)),
             retrieved_at=changes.pop("retrieved_at", datetime(2026, 9, 20, 12, 0, 0)),
             company_name="Synthetic Company",
-            sector=sectors[scorecard],
-            industry=industries[scorecard],
+            sector=changes.pop("sector", sectors[scorecard]),
+            industry=changes.pop("industry", industries[scorecard]),
             currency="USD",
             metrics=metrics,
             metric_sources={key: "synthetic" for key in metrics},

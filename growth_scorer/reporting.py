@@ -46,8 +46,13 @@ def _write_summary(workbook: Workbook, result: ScoreResult, snapshot: InputSnaps
         ("Ticker", result.ticker),
         ("Company", result.company_name or ""),
         ("Country", result.country),
+        ("Yahoo sector", snapshot.sector or ""),
+        ("Yahoo industry", snapshot.industry or ""),
+        ("Yahoo industry key", snapshot.industry_key or ""),
         ("As-of date", result.as_of.isoformat()),
         ("Scorecard", result.scorecard.title()),
+        ("Classification confidence", result.classification_confidence),
+        ("Classification reason", result.classification_reason),
         ("Overall score", result.score),
         ("Verdict", result.verdict),
         ("Data confidence", result.confidence / 100),
@@ -57,16 +62,20 @@ def _write_summary(workbook: Workbook, result: ScoreResult, snapshot: InputSnaps
         ("Latest financial period", snapshot.latest_financial_date.isoformat() if snapshot.latest_financial_date else ""),
         ("Risk gates", "; ".join(result.risk_gates) if result.risk_gates else "None"),
     ]
+    field_rows: dict[str, int] = {}
     for field, value in fields:
         ws.append([field, value])
+        field_rows[field] = ws.max_row
     ws.append([])
     ws.append(["Pillar", "Score (0-100)"])
     for pillar, score in result.pillar_scores.items():
         ws.append([pillar, score])
     _header(ws, 1)
     _header(ws, len(fields) + 3)
-    ws[7][1].font = Font(bold=True, color=RED if result.verdict in {"Reject", "Insufficient Data"} else NAVY)
-    ws[9][1].number_format = "0.0%"
+    ws.cell(field_rows["Verdict"], 2).font = Font(
+        bold=True, color=RED if result.verdict in {"Reject", "Insufficient Data"} else NAVY
+    )
+    ws.cell(field_rows["Data confidence"], 2).number_format = "0.0%"
     _fit(ws)
     ws.auto_filter.ref = "A1:B1"
 
@@ -103,7 +112,15 @@ def _write_factors(workbook: Workbook, result: ScoreResult) -> None:
 
 
 def _flatten_raw(snapshot: InputSnapshot) -> list[list[Any]]:
-    rows: list[list[Any]] = []
+    rows: list[list[Any]] = [
+        ["company_profile", snapshot.as_of.isoformat(), "sector", snapshot.sector],
+        ["company_profile", snapshot.as_of.isoformat(), "sector_key", snapshot.sector_key],
+        ["company_profile", snapshot.as_of.isoformat(), "industry", snapshot.industry],
+        ["company_profile", snapshot.as_of.isoformat(), "industry_key", snapshot.industry_key],
+        ["company_profile", snapshot.as_of.isoformat(), "quote_type", snapshot.quote_type],
+        ["company_profile", snapshot.as_of.isoformat(), "exchange", snapshot.exchange],
+        ["company_profile", snapshot.as_of.isoformat(), "business_summary", snapshot.business_summary],
+    ]
     for metric, value in sorted(snapshot.metrics.items()):
         rows.append(["calculated_metrics", snapshot.as_of.isoformat(), metric, value])
     datasets = {

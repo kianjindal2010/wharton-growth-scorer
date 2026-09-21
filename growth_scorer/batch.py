@@ -12,8 +12,8 @@ from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
 from .data import build_snapshot
-from .engine import score_snapshot
-from .overrides import apply_overrides, read_overrides
+from .engine import classify, score_snapshot
+from .overrides import apply_overrides, discover_override, read_overrides
 from .reporting import write_json, write_workbook
 from .storage import record_and_rank
 from .validation import SCORECARDS, safe_name, validate_ticker_country
@@ -128,24 +128,26 @@ def _write_batch_workbook(path: Path, payload: dict[str, Any]) -> None:
 
     results = workbook.create_sheet("Results")
     results.append([
-        "Ticker", "Company", "Country", "Scorecard", "Score", "Verdict", "Confidence",
-        "Batch rank", "Comparable count", "Risk gates", "Warnings", "Excel report", "JSON result",
+        "Ticker", "Company", "Country", "Scorecard", "Classification confidence", "Classification reason",
+        "Score", "Verdict", "Data confidence", "Batch rank", "Comparable count", "Risk gates", "Warnings",
+        "Excel report", "JSON result",
     ])
     for record in payload["results"]:
         results.append([
             record["ticker"], record["company_name"], record["country"], record["scorecard"],
+            record["classification_confidence"], record["classification_reason"],
             record["score"], record["verdict"], record["confidence"] / 100,
             record["rank"] if record["rank"] is not None else "Not meaningful",
             record["comparable_count"], "; ".join(record["risk_gates"]),
             "; ".join(record["warnings"]), "Open company workbook", "Open JSON result",
         ])
         row = results.max_row
-        results.cell(row, 7).number_format = "0.0%"
-        for column, key in ((12, "workbook_path"), (13, "json_path")):
+        results.cell(row, 9).number_format = "0.0%"
+        for column, key in ((14, "workbook_path"), (15, "json_path")):
             linked_path = Path(record[key])
             results.cell(row, column).hyperlink = linked_path.resolve().as_uri()
             results.cell(row, column).style = "Hyperlink"
-        verdict_cell = results.cell(row, 6)
+        verdict_cell = results.cell(row, 8)
         if record["verdict"] in {"Reject", "Insufficient Data"}:
             verdict_cell.font = Font(color=RED, bold=True)
     _header(results)
@@ -184,6 +186,7 @@ def run_batch(
     output_dir: Path,
     data_dir: Path,
     history_db: Path,
+    overrides_dir: Path | None = None,
 ) -> tuple[Path, Path, dict[str, Any]]:
     items = _validate_items(items)
     started = datetime.now().astimezone()
@@ -200,9 +203,15 @@ def run_batch(
             if item.scorecard not in SCORECARDS:
                 raise ValueError(f"Unknown scorecard: {item.scorecard}")
             snapshot = build_snapshot(item.ticker, item.country, as_of)
-            if item.overrides:
-                records, warnings = read_overrides(item.overrides, as_of)
+            detected_scorecard = classify(snapshot, item.scorecard)
+            override_path = item.overrides or discover_override(overrides_dir, item.ticker, detected_scorecard)
+            if override_path:
+                records, warnings = read_overrides(override_path, as_of)
                 apply_overrides(snapshot, records, warnings)
+                if item.overrides is None:
+                    snapshot.warnings.append(
+                        f"Automatically applied ticker-specific verified overrides: {override_path}"
+                    )
             ticker_name = safe_name(snapshot.ticker)
             frozen_path = data_dir / ticker_name / f"{as_of.isoformat()}.json"
             snapshot.save(frozen_path)
@@ -248,6 +257,8 @@ def run_batch(
             "company_name": result.company_name or "",
             "country": result.country,
             "scorecard": result.scorecard,
+            "classification_confidence": result.classification_confidence,
+            "classification_reason": result.classification_reason,
             "score": result.score,
             "verdict": result.verdict,
             "confidence": result.confidence,

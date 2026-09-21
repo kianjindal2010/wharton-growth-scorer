@@ -121,6 +121,22 @@ These are normally entered through a dated analyst override file because Yahoo F
 
 The override record also stores `unit`, `reporting_period`, `publication_date`, `source_url`, and `verified_by`. Future-dated and unverified rows are rejected.
 
+## Industry-detection variables
+
+Automatic scorecard selection now evaluates all available Yahoo profile fields below before using a broad sector fallback:
+
+| Variable | Use |
+|---|---|
+| `sector` | Human-readable broad sector |
+| `sector_key` | Normalized Yahoo sector identifier |
+| `industry` | Human-readable detailed industry |
+| `industry_key` | Normalized Yahoo industry identifier |
+| `business_summary` | Company-description evidence used when the detailed industry is ambiguous |
+| `quote_type` | Security-type audit field |
+| `exchange` | Listing-venue audit field |
+
+The result records `classification_confidence` and `classification_reason`. Exact industry matches take precedence over company-description matches, which take precedence over broad sector fallbacks.
+
 ## News variables
 
 | Metric key | Meaning |

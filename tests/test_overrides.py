@@ -1,8 +1,9 @@
 from datetime import date
 
 import pandas as pd
+import pytest
 
-from growth_scorer.overrides import apply_overrides, read_overrides
+from growth_scorer.overrides import apply_overrides, discover_override, read_overrides
 
 
 def test_verified_overrides_precede_yahoo_and_future_rows_are_blocked(tmp_path, snapshot_factory):
@@ -37,3 +38,18 @@ def test_verified_overrides_precede_yahoo_and_future_rows_are_blocked(tmp_path, 
     assert snapshot.metrics["fcf_margin"] != 0.99
     assert any("after as-of" in warning for warning in snapshot.warnings)
 
+
+def test_discover_override_uses_detected_scorecard_and_exact_ticker(tmp_path):
+    scorecard_dir = tmp_path / "consumer"
+    scorecard_dir.mkdir()
+    expected = scorecard_dir / "NKE.xlsx"
+    expected.touch()
+    (scorecard_dir / "OTHER.xlsx").touch()
+    assert discover_override(tmp_path, "NKE", "consumer") == expected.resolve()
+
+
+def test_discover_override_rejects_ambiguous_matches(tmp_path):
+    (tmp_path / "MSFT.csv").touch()
+    (tmp_path / "technology_MSFT.xlsx").touch()
+    with pytest.raises(ValueError, match="Multiple automatic override"):
+        discover_override(tmp_path, "MSFT", "technology")

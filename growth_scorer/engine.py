@@ -7,6 +7,7 @@ from typing import Any
 import numpy as np
 
 from .config import COMMON_NEWS_SPECS, load_scorecards
+from .classification import detect_classification
 from .models import FactorResult, InputSnapshot, ScoreResult, ScorecardName
 from .transforms import piecewise_score
 
@@ -53,45 +54,8 @@ OPERATING_SCORECARDS = {
     "general", "technology", "healthcare", "financial_platform", "industrial", "consumer",
     "energy_materials", "semiconductor", "memory_semiconductor",
 }
-SCORECARD_NAMES = set(REQUIRED_SPECIALIST_METRICS)
-
-
 def classify(snapshot: InputSnapshot, requested: str = "auto") -> ScorecardName:
-    if requested != "auto":
-        if requested not in SCORECARD_NAMES:
-            raise ValueError(f"Unknown scorecard: {requested}")
-        return requested  # type: ignore[return-value]
-
-    industry = (snapshot.industry or "").lower()
-    sector = (snapshot.sector or "").lower()
-    if "insurance" in industry or "insurer" in industry:
-        return "insurer"
-    bank_terms = ("bank", "mortgage finance", "savings & cooperative")
-    if any(term in industry for term in bank_terms):
-        return "bank"
-    if "semiconductor" in industry:
-        return "semiconductor"
-    is_biotech = "biotech" in industry or "biotechnology" in sector
-    pre_profit = (snapshot.metrics.get("operating_income", 0) or 0) < 0 or (
-        snapshot.metrics.get("free_cash_flow", 0) or 0
-    ) < 0
-    if is_biotech and pre_profit:
-        return "biotech"
-    if sector in {"technology", "communication services"}:
-        return "technology"
-    if sector == "healthcare":
-        return "healthcare"
-    if sector == "financial services":
-        return "financial_platform"
-    if sector == "industrials":
-        return "industrial"
-    if sector in {"consumer cyclical", "consumer defensive"} or any(
-        term in industry for term in ("media", "publishing", "education", "entertainment")
-    ):
-        return "consumer"
-    if sector in {"energy", "basic materials", "utilities"}:
-        return "energy_materials"
-    return "general"
+    return detect_classification(snapshot, requested).scorecard
 
 
 def _business_days_after(last_date: date | None, as_of: date) -> int | None:
@@ -134,7 +98,8 @@ def _risk_gates(snapshot: InputSnapshot, scorecard: ScorecardName) -> list[str]:
 
 
 def score_snapshot(snapshot: InputSnapshot, requested_scorecard: str = "auto") -> ScoreResult:
-    scorecard = classify(snapshot, requested_scorecard)
+    classification = detect_classification(snapshot, requested_scorecard)
+    scorecard = classification.scorecard
     cards = load_scorecards()
     core_specs: list[dict[str, Any]] = cards[scorecard]
     if round(sum(float(spec["weight"]) for spec in core_specs), 8) != 100:
@@ -232,6 +197,8 @@ def score_snapshot(snapshot: InputSnapshot, requested_scorecard: str = "auto") -
         country=snapshot.country,
         as_of=snapshot.as_of,
         scorecard=scorecard,
+        classification_confidence=classification.confidence,
+        classification_reason=classification.reason,
         score=total,
         verdict=verdict,
         confidence=confidence,
