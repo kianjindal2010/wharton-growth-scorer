@@ -61,6 +61,7 @@ EOF
 chmod +x "$BIN_DIR/wharton"
 
 APP_DIR="$HOME/Applications/Wharton Growth Scorer.app"
+DESKTOP_APP_LINK="$HOME/Desktop/Wharton Growth Scorer.app"
 mkdir -p "$APP_DIR/Contents/MacOS"
 cat > "$APP_DIR/Contents/Info.plist" <<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -69,8 +70,12 @@ cat > "$APP_DIR/Contents/Info.plist" <<'EOF'
   <key>CFBundleName</key><string>Wharton Growth Scorer</string>
   <key>CFBundleDisplayName</key><string>Wharton Growth Scorer</string>
   <key>CFBundleIdentifier</key><string>org.wharton-growth-scorer.desktop</string>
-  <key>CFBundleVersion</key><string>0.8.0</string>
+  <key>CFBundleExecutable</key><string>Wharton Growth Scorer</string>
+  <key>CFBundleVersion</key><string>0.8.1</string>
+  <key>CFBundleShortVersionString</key><string>0.8.1</string>
   <key>CFBundlePackageType</key><string>APPL</string>
+  <key>LSMinimumSystemVersion</key><string>11.0</string>
+  <key>NSHighResolutionCapable</key><true/>
 </dict></plist>
 EOF
 cat > "$APP_DIR/Contents/MacOS/Wharton Growth Scorer" <<EOF
@@ -78,6 +83,14 @@ cat > "$APP_DIR/Contents/MacOS/Wharton Growth Scorer" <<EOF
 exec "$INSTALL_ROOT/.venv/bin/python" -m growth_scorer.app
 EOF
 chmod +x "$APP_DIR/Contents/MacOS/Wharton Growth Scorer"
+
+if [[ -d "$HOME/Desktop" ]]; then
+  if [[ -L "$DESKTOP_APP_LINK" ]]; then
+    ln -sfn "$APP_DIR" "$DESKTOP_APP_LINK"
+  elif [[ ! -e "$DESKTOP_APP_LINK" ]]; then
+    ln -s "$APP_DIR" "$DESKTOP_APP_LINK"
+  fi
+fi
 
 PATH_LINE='export PATH="$HOME/.local/bin:$PATH"'
 for PROFILE in "$HOME/.zprofile" "$HOME/.bash_profile"; do
@@ -89,7 +102,7 @@ done
 
 echo
 echo "Installation complete."
-echo "Open 'Wharton Growth Scorer' from your Applications folder."
+echo "Open 'Wharton Growth Scorer' from Applications, Spotlight, or the Desktop shortcut."
 echo "Advanced command-line access remains available with: wharton predict"
 echo "Excel reports will be saved under: $HOME/Documents/Wharton Growth Scorer/output/scores"
 open "$APP_DIR"

@@ -25,7 +25,7 @@ Paste this complete line into Terminal:
 curl -fsSL https://raw.githubusercontent.com/kianjindal2010/wharton-growth-scorer/main/bootstrap.sh | bash && export PATH="$HOME/.local/bin:$PATH"
 ```
 
-The installer creates **Wharton Growth Scorer.app** in your user Applications folder and opens it automatically. For future use, open it from Finder → Applications or search for it with Spotlight. No Terminal command is required.
+The installer creates **Wharton Growth Scorer.app** in your user Applications folder, adds a Desktop alias, and opens it automatically. For future use, double-click the Desktop icon, open it from Finder → Applications, or search for it with Spotlight. No Terminal command is required.
 
 The command-line interface remains available for advanced use:
 

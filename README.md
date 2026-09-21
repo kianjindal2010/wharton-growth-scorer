@@ -1,6 +1,6 @@
 # Growth Sleeve Scoring Model
 
-A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve. Version 0.8.0 includes a local frontend for single-company and batch analysis. It deliberately does **not** determine WInS eligibility, asset allocation, or defensive-sleeve investments.
+A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve. Version 0.8.1 includes a local frontend for single-company and batch analysis. It deliberately does **not** determine WInS eligibility, asset allocation, or defensive-sleeve investments.
 
 ## Quick start
 
@@ -45,7 +45,7 @@ Paste this into Terminal:
 curl -fsSL https://raw.githubusercontent.com/kianjindal2010/wharton-growth-scorer/main/bootstrap.sh | bash && export PATH="$HOME/.local/bin:$PATH"
 ```
 
-The installer creates **Wharton Growth Scorer.app** in the user's Applications folder and opens it automatically. Future analysis can be started from Finder or Spotlight without Terminal. The `wharton` command remains available for advanced use. Detailed macOS instructions are in [INSTALL_MAC.md](INSTALL_MAC.md).
+The installer creates **Wharton Growth Scorer.app** in the user's Applications folder, adds a Desktop alias, and opens it automatically. Future analysis can be started from the Desktop, Finder, or Spotlight without Terminal. The `wharton` command remains available for advanced use. Detailed macOS instructions are in [INSTALL_MAC.md](INSTALL_MAC.md).
 
 ## Frontend application
 
