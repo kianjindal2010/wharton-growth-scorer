@@ -12,6 +12,7 @@ from importlib.resources import files
 from pathlib import Path
 from typing import Any
 from urllib.error import URLError
+from urllib.parse import urlsplit
 from urllib.request import urlopen
 
 from .batch import BatchItem, run_batch
@@ -19,7 +20,13 @@ from .data import build_snapshot
 from .engine import score_snapshot
 from .reporting import write_json, write_workbook
 from .storage import record_and_rank, update_paths
-from .validation import COUNTRY_CODES, safe_name, validate_ticker_country
+from .validation import (
+    COUNTRY_CODES,
+    infer_country_from_ticker,
+    normalize_ticker_for_country,
+    safe_name,
+    validate_ticker_country,
+)
 
 
 APP_HOST = "127.0.0.1"
@@ -44,21 +51,27 @@ def parse_as_of(value: str | None) -> date:
 def parse_batch_items(raw_items: Any) -> list[BatchItem]:
     if not isinstance(raw_items, list) or not raw_items:
         raise ValueError("Add at least one company to the batch")
+    if len(raw_items) > 100:
+        raise ValueError("A batch can contain at most 100 companies")
     items: list[BatchItem] = []
     for number, raw in enumerate(raw_items, start=1):
         if not isinstance(raw, dict):
             raise ValueError(f"Company {number} is invalid")
         ticker = str(raw.get("ticker", "")).strip().upper()
         country = str(raw.get("country", "")).strip().upper()
-        if not ticker or not country:
-            raise ValueError(f"Company {number} needs a ticker and country")
+        if not ticker:
+            raise ValueError(f"Company {number} needs a ticker")
+        if country:
+            ticker = normalize_ticker_for_country(ticker, country)
+        else:
+            country = infer_country_from_ticker(ticker)
         validate_ticker_country(ticker, country)
         items.append(BatchItem(ticker=ticker, country=country, scorecard="auto"))
     return items
 
 
 def score_company(ticker: str, country: str, as_of: date) -> dict[str, Any]:
-    ticker = ticker.strip().upper()
+    ticker = normalize_ticker_for_country(ticker, country)
     country = country.strip().upper()
     validate_ticker_country(ticker, country)
 
@@ -182,10 +195,11 @@ class AppHandler(BaseHTTPRequestHandler):
         return payload
 
     def do_GET(self) -> None:  # noqa: N802
-        if self.path == "/api/health":
+        path = urlsplit(self.path).path
+        if path == "/api/health":
             self._json(200, {"status": "ok"})
             return
-        if self.path not in {"/", "/index.html"}:
+        if path not in {"/", "/index.html"}:
             self.send_error(404)
             return
         body = files("growth_scorer").joinpath("web/index.html").read_bytes()

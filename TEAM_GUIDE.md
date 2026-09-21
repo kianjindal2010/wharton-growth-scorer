@@ -46,6 +46,8 @@ wharton batch
 
 Keep adding tickers when prompted, then press Enter at the next blank ticker prompt. The model processes every company, creates the same detailed five-sheet workbook for each one, and adds a consolidated `Batch_Summary.xlsx` workbook.
 
+In the frontend, paste up to 100 already formatted Yahoo tickers into one box. The list may mix markets, for example `MSFT,TCS.NS,2330.TW,000660.KS,035420.KQ`. The application infers each market from its suffix; US tickers require no suffix. Separate entries with commas or new lines, then select **Add tickers**.
+
 For a prepared team list, use a CSV with this format:
 
 ```csv

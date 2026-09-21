@@ -35,6 +35,8 @@ wharton predict
 
 In the frontend, choose **Single company** or **Batch comparison**, add the companies, select the information date, and click the run button. The result screen can open the generated Excel workbook or output folder directly.
 
+For a batch, paste up to 100 already formatted Yahoo Finance tickers into one comma-separated list. Markets may be mixed, such as `MSFT,TCS.NS,2330.TW,000660.KS`; the application detects the country from each suffix.
+
 The same installer command downloads updates and reinstalls the model later.
 
 ## Interactive inputs

@@ -4,6 +4,16 @@ import re
 
 
 COUNTRY_CODES = {"US", "JP", "GB", "IN", "TW", "KR"}
+DEFAULT_MARKET_SUFFIXES = {
+    "US": "", "JP": ".T", "GB": ".L", "IN": ".NS", "TW": ".TW", "KR": ".KS",
+}
+VALID_MARKET_SUFFIXES = {
+    "US": (), "JP": (".T",), "GB": (".L",), "IN": (".NS", ".BO"),
+    "TW": (".TW", ".TWO"), "KR": (".KS", ".KQ"),
+}
+KNOWN_INTERNATIONAL_SUFFIXES = tuple(
+    suffix for suffixes in VALID_MARKET_SUFFIXES.values() for suffix in suffixes
+)
 SCORECARDS = {
     "auto", "general", "technology", "healthcare", "financial_platform", "industrial",
     "consumer", "energy_materials", "bank", "insurer", "biotech", "semiconductor",
@@ -17,6 +27,40 @@ SCORECARDS = {
 
 def safe_name(ticker: str) -> str:
     return re.sub(r"[^A-Za-z0-9._-]+", "_", ticker)
+
+
+def normalize_ticker_for_country(ticker: str, country: str) -> str:
+    """Add the default Yahoo market suffix when the analyst enters a bare ticker."""
+    ticker = ticker.strip().upper()
+    country = country.strip().upper()
+    if not ticker:
+        raise ValueError("Ticker cannot be blank")
+    if country not in COUNTRY_CODES:
+        raise ValueError(f"Unsupported country code: {country}")
+    allowed = VALID_MARKET_SUFFIXES[country]
+    if any(ticker.endswith(suffix) for suffix in allowed):
+        return ticker
+    if any(ticker.endswith(suffix) for suffix in KNOWN_INTERNATIONAL_SUFFIXES):
+        raise ValueError(f"Ticker {ticker} already has a suffix for a different market")
+    return ticker + DEFAULT_MARKET_SUFFIXES[country]
+
+
+def infer_country_from_ticker(ticker: str) -> str:
+    """Infer a supported market from an already formatted Yahoo Finance ticker."""
+    ticker = ticker.strip().upper()
+    if not ticker:
+        raise ValueError("Ticker cannot be blank")
+    suffix_markets = (
+        ((".TWO", ".TW"), "TW"),
+        ((".NS", ".BO"), "IN"),
+        ((".KS", ".KQ"), "KR"),
+        ((".T",), "JP"),
+        ((".L",), "GB"),
+    )
+    for suffixes, country in suffix_markets:
+        if ticker.endswith(suffixes):
+            return country
+    return "US"
 
 
 def validate_ticker_country(ticker: str, country: str) -> None:

@@ -1,6 +1,6 @@
 # Growth Sleeve Scoring Model
 
-A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve. Version 0.8.1 includes a local frontend for single-company and batch analysis. It deliberately does **not** determine WInS eligibility, asset allocation, or defensive-sleeve investments.
+A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve. Version 0.9.0 includes a local frontend for single-company and batch analysis. It deliberately does **not** determine WInS eligibility, asset allocation, or defensive-sleeve investments.
 
 ## Quick start
 
@@ -54,11 +54,14 @@ The frontend provides:
 - A single-company form with ticker, country, and information date.
 - Fully automatic detailed scorecard selection.
 - A batch builder where companies can be added and removed without creating a CSV.
+- A comma-separated mixed-market ticker box that accepts up to 100 companies.
 - Busy and error states while Yahoo Finance data is processed.
 - Score, verdict, confidence, model, and comparable-rank summaries.
 - Buttons that open the generated Excel report or its output folder.
 
 The interface is available only on `127.0.0.1:8765` and the scoring engine runs on the user's computer. Use **Close application** at the bottom of the page when finished.
+
+Enter already formatted Yahoo tickers in one mixed list, for example `MSFT,TCS.NS,2330.TW,000660.KS,035420.KQ`. The application infers the market from `.T`, `.L`, `.NS`, `.BO`, `.TW`, `.TWO`, `.KS`, or `.KQ`; a ticker without one of those suffixes is treated as a US security. Duplicate entries are removed and the interface enforces a 100-company maximum.
 
 The interactive command asks for the ticker, country, as-of date, and scorecard. `auto` examines Yahoo's sector, sector key, industry, industry key, company description, and financial condition. It selects one of 28 broad or detailed models. The Excel Summary sheet records the classification confidence and exact matching reason. Experienced users can supply everything in one command:
 
