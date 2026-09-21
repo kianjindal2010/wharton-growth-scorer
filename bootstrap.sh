@@ -60,6 +60,25 @@ exec "$INSTALL_ROOT/.venv/bin/wharton" "\$@"
 EOF
 chmod +x "$BIN_DIR/wharton"
 
+APP_DIR="$HOME/Applications/Wharton Growth Scorer.app"
+mkdir -p "$APP_DIR/Contents/MacOS"
+cat > "$APP_DIR/Contents/Info.plist" <<'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleName</key><string>Wharton Growth Scorer</string>
+  <key>CFBundleDisplayName</key><string>Wharton Growth Scorer</string>
+  <key>CFBundleIdentifier</key><string>org.wharton-growth-scorer.desktop</string>
+  <key>CFBundleVersion</key><string>0.8.0</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+</dict></plist>
+EOF
+cat > "$APP_DIR/Contents/MacOS/Wharton Growth Scorer" <<EOF
+#!/usr/bin/env bash
+exec "$INSTALL_ROOT/.venv/bin/python" -m growth_scorer.app
+EOF
+chmod +x "$APP_DIR/Contents/MacOS/Wharton Growth Scorer"
+
 PATH_LINE='export PATH="$HOME/.local/bin:$PATH"'
 for PROFILE in "$HOME/.zprofile" "$HOME/.bash_profile"; do
   touch "$PROFILE"
@@ -70,6 +89,7 @@ done
 
 echo
 echo "Installation complete."
-echo "Run: export PATH=\"\$HOME/.local/bin:\$PATH\""
-echo "Then run: wharton predict"
+echo "Open 'Wharton Growth Scorer' from your Applications folder."
+echo "Advanced command-line access remains available with: wharton predict"
 echo "Excel reports will be saved under: $HOME/Documents/Wharton Growth Scorer/output/scores"
+open "$APP_DIR"

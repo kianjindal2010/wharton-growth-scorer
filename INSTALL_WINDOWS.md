@@ -18,16 +18,20 @@ Paste this complete line into PowerShell. No GitHub account or Git installation 
 irm https://raw.githubusercontent.com/kianjindal2010/wharton-growth-scorer/main/bootstrap.ps1 | iex
 ```
 
-Then type:
+The installer opens the frontend automatically. It also creates a **Wharton Growth Scorer** shortcut on the Desktop and in the Start menu. Double-click either shortcut for future use; no command is required.
+
+The command-line interface remains available for advanced use:
 
 ```powershell
 wharton predict
 ```
 
+In the frontend, choose **Single company** or **Batch comparison**, enter the tickers and countries, select the information date, and click the run button. The result screen can open the Excel workbook or output folder directly.
+
 The same command can be used later to download updates and reinstall the model.
 
 1. Open PowerShell.
-2. Download the shared ZIP from Google Drive, extract it, and open PowerShell in the extracted `Wharton_Growth_Scorer_v0.4.0` folder.
+2. Download the shared ZIP, extract it, and open PowerShell in the extracted project folder.
 
    After the repository is published later, teammates may instead clone it and enter the folder:
 

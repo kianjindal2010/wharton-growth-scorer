@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wharton Growth Scorer</title>
+  <style>
+    :root {
+      --navy: #12355b;
+      --navy-deep: #09233f;
+      --blue: #2775a8;
+      --sky: #e9f2f7;
+      --gold: #d9a928;
+      --paper: #f6f4ee;
+      --ink: #17212b;
+      --muted: #637181;
+      --line: #ccd6dc;
+      --success: #17785b;
+      --danger: #b73535;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font-family: Aptos, "Segoe UI", sans-serif; }
+    header { background: var(--navy-deep); color: white; padding: 26px clamp(22px, 5vw, 72px); border-bottom: 5px solid var(--gold); }
+    header .eyebrow { color: #9fc5dd; text-transform: uppercase; letter-spacing: .16em; font-size: 12px; font-weight: 700; }
+    h1 { margin: 7px 0 5px; font: 700 clamp(28px, 4vw, 43px)/1.05 Georgia, serif; }
+    header p { margin: 0; color: #cbdbe5; }
+    main { width: min(1080px, calc(100% - 32px)); margin: 28px auto 60px; }
+    .tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--line); }
+    .tab { border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--muted); padding: 13px 18px; font-weight: 750; cursor: pointer; }
+    .tab.active { color: var(--navy); border-color: var(--gold); }
+    .panel { display: none; padding-top: 24px; }
+    .panel.active { display: block; }
+    .intro { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin-bottom: 20px; }
+    h2 { margin: 0 0 6px; color: var(--navy-deep); font: 700 25px/1.2 Georgia, serif; }
+    .intro p, .hint { margin: 0; color: var(--muted); line-height: 1.5; }
+    .form-grid { display: grid; grid-template-columns: 2fr 1fr 1.25fr; gap: 14px; padding: 20px; background: white; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 10px 28px rgba(20, 48, 72, .06); }
+    label { display: grid; gap: 7px; color: var(--navy-deep); font-size: 13px; font-weight: 750; }
+    input, select { width: 100%; min-height: 44px; border: 1px solid #aebbc4; border-radius: 7px; background: #fff; color: var(--ink); padding: 9px 11px; font: inherit; }
+    input:focus, select:focus, button:focus-visible { outline: 3px solid rgba(39, 117, 168, .25); outline-offset: 1px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    button { min-height: 42px; border-radius: 7px; border: 1px solid transparent; padding: 9px 16px; font: 750 14px/1 Aptos, "Segoe UI", sans-serif; cursor: pointer; }
+    button:disabled { opacity: .55; cursor: wait; }
+    .primary { color: white; background: var(--navy); }
+    .primary:hover { background: var(--navy-deep); }
+    .secondary { color: var(--navy); background: white; border-color: var(--navy); }
+    .quiet { color: var(--muted); background: transparent; border-color: var(--line); }
+    .danger { color: var(--danger); background: transparent; border-color: #dfb3b3; }
+    .status { display: none; align-items: center; gap: 11px; margin-top: 18px; padding: 13px 15px; border-left: 4px solid var(--blue); background: var(--sky); color: var(--navy-deep); }
+    .status.show { display: flex; }
+    .spinner { width: 18px; height: 18px; flex: 0 0 auto; border: 2px solid #a6c4d6; border-top-color: var(--navy); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .result { display: none; margin-top: 20px; background: white; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    .result.show { display: block; }
+    .result-head { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; background: var(--navy); color: white; padding: 20px; }
+    .result-head h3 { margin: 0 0 4px; font: 700 22px Georgia, serif; }
+    .score { text-align: right; font: 700 36px/1 Georgia, serif; color: #ffe08a; }
+    .score small { display: block; margin-top: 6px; color: white; font: 700 12px Aptos, sans-serif; text-transform: uppercase; letter-spacing: .08em; }
+    .result-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); }
+    .metric { background: white; padding: 16px 20px; }
+    .metric span { display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    .metric strong { display: block; margin-top: 4px; color: var(--navy-deep); }
+    .result-actions { padding: 16px 20px; background: white; }
+    .error { display: none; margin-top: 16px; padding: 13px 15px; color: #721c24; background: #f8d7da; border-left: 4px solid var(--danger); }
+    .error.show { display: block; }
+    .batch-entry { display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; align-items: end; }
+    table { width: 100%; margin-top: 16px; border-collapse: collapse; background: white; border: 1px solid var(--line); }
+    th { background: var(--navy); color: white; text-align: left; padding: 11px 13px; font-size: 13px; }
+    td { padding: 10px 13px; border-top: 1px solid var(--line); }
+    tbody tr:nth-child(even) { background: #f4f8fa; }
+    .empty { color: var(--muted); text-align: center; padding: 24px; }
+    footer { display: flex; justify-content: space-between; gap: 15px; align-items: center; margin-top: 32px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 700px) {
+      .form-grid, .batch-entry, .result-body { grid-template-columns: 1fr; }
+      .intro { display: block; }
+      .result-head { grid-template-columns: 1fr; }
+      .score { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Wharton Global High School Investment Competition</div>
+    <h1>Growth Scorer</h1>
+    <p>Automated, sector-aware equity analysis with reproducible Excel evidence.</p>
+  </header>
+  <main>
+    <nav class="tabs" aria-label="Analysis type">
+      <button class="tab active" data-panel="single">Single company</button>
+      <button class="tab" data-panel="batch">Batch comparison</button>
+    </nav>
+
+    <section id="single" class="panel active">
+      <div class="intro"><div><h2>Analyze one company</h2><p>The model automatically selects the detailed industry scorecard.</p></div></div>
+      <form id="single-form">
+        <div class="form-grid">
+          <label>Yahoo Finance ticker<input id="ticker" required autocomplete="off" placeholder="MSFT or 2330.TW"></label>
+          <label>Country<select id="country"><option>US</option><option>JP</option><option>GB</option><option>IN</option><option>TW</option><option>KR</option></select></label>
+          <label>Information date<input id="single-date" type="date" required></label>
+        </div>
+        <p class="hint" style="margin-top:10px">Ticker examples: MSFT · 7203.T · AZN.L · TCS.NS · 2330.TW · 000660.KS</p>
+        <div class="actions"><button id="single-run" class="primary" type="submit">Run analysis</button></div>
+      </form>
+      <div id="single-status" class="status"><span class="spinner"></span><span>Downloading market data, statements and news. This can take a few minutes.</span></div>
+      <div id="single-error" class="error"></div>
+      <div id="single-result" class="result"></div>
+    </section>
+
+    <section id="batch" class="panel">
+      <div class="intro"><div><h2>Compare a list</h2><p>Use one information date for the entire batch. Rankings stay within comparable scorecards.</p></div></div>
+      <div class="form-grid" style="display:block">
+        <div class="batch-entry">
+          <label>Yahoo Finance ticker<input id="batch-ticker" autocomplete="off" placeholder="Add a company"></label>
+          <label>Country<select id="batch-country"><option>US</option><option>JP</option><option>GB</option><option>IN</option><option>TW</option><option>KR</option></select></label>
+          <button id="add-company" class="secondary" type="button">Add company</button>
+        </div>
+        <table aria-label="Companies in batch"><thead><tr><th>Ticker</th><th>Country</th><th></th></tr></thead><tbody id="batch-list"><tr><td class="empty" colspan="3">No companies added yet.</td></tr></tbody></table>
+        <div class="actions" style="align-items:end">
+          <label style="max-width:230px">Information date<input id="batch-date" type="date" required></label>
+          <button id="batch-run" class="primary" type="button">Run batch</button>
+        </div>
+      </div>
+      <div id="batch-status" class="status"><span class="spinner"></span><span>Scoring the companies and building the comparison workbook.</span></div>
+      <div id="batch-error" class="error"></div>
+      <div id="batch-result" class="result"></div>
+    </section>
+
+    <footer><span>Research aid only—not an instruction to trade.</span><button id="quit" class="quiet" type="button">Close application</button></footer>
+  </main>
+  <script>
+    const today = new Date().toISOString().slice(0, 10);
+    document.querySelectorAll('input[type="date"]').forEach(el => { el.value = today; el.max = today; });
+    document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab,.panel').forEach(el => el.classList.remove('active'));
+      tab.classList.add('active'); document.getElementById(tab.dataset.panel).classList.add('active');
+    }));
+
+    async function api(path, data) {
+      const response = await fetch(path, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+      const payload = await response.json();
+      if (!response.ok || !payload.ok) throw new Error(payload.error || 'The request failed');
+      return payload.result;
+    }
+    function esc(value) { const d=document.createElement('div'); d.textContent=String(value ?? ''); return d.innerHTML; }
+    function setBusy(prefix, busy) {
+      document.getElementById(prefix+'-status').classList.toggle('show', busy);
+      if (busy) document.getElementById(prefix+'-error').classList.remove('show');
+      document.getElementById(prefix+'-run').disabled = busy;
+    }
+    function fail(prefix, error) { const el=document.getElementById(prefix+'-error'); el.textContent=error.message; el.classList.add('show'); }
+    async function openPath(path) { try { await api('/api/open', {path}); } catch(e) { alert(e.message); } }
+    function resultCard(r) {
+      const rank = r.rank ? `${r.rank} of ${r.comparable_count}` : 'Needs a comparable company';
+      return `<div class="result-head"><div><h3>${esc(r.company_name || r.ticker)}</h3><div>${esc(r.ticker)} · ${esc(r.verdict)}</div></div><div class="score">${Number(r.score).toFixed(2)}<small>out of 100</small></div></div>
+        <div class="result-body"><div class="metric"><span>Industry model</span><strong>${esc(r.scorecard.replaceAll('_',' '))}</strong></div><div class="metric"><span>Data confidence</span><strong>${Number(r.confidence).toFixed(1)}%</strong></div><div class="metric"><span>Weekly rank</span><strong>${esc(rank)}</strong></div></div>
+        <div class="result-actions"><div class="actions"><button class="primary" data-open="${encodeURIComponent(r.workbook_path)}">Open Excel report</button><button class="secondary" data-open="${encodeURIComponent(r.output_directory)}">Open output folder</button></div></div>`;
+    }
+    function wireOpenButtons(container) { container.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openPath(decodeURIComponent(b.dataset.open)))); }
+
+    document.getElementById('single-form').addEventListener('submit', async e => {
+      e.preventDefault(); setBusy('single', true); document.getElementById('single-result').classList.remove('show');
+      try {
+        const r = await api('/api/score', {ticker:document.getElementById('ticker').value, country:document.getElementById('country').value, as_of:document.getElementById('single-date').value});
+        const box=document.getElementById('single-result'); box.innerHTML=resultCard(r); box.classList.add('show'); wireOpenButtons(box);
+      } catch(error) { fail('single', error); } finally { setBusy('single', false); }
+    });
+
+    const batch=[];
+    function renderBatch() {
+      const body=document.getElementById('batch-list');
+      if (!batch.length) { body.innerHTML='<tr><td class="empty" colspan="3">No companies added yet.</td></tr>'; return; }
+      body.innerHTML=batch.map((x,i)=>`<tr><td><strong>${esc(x.ticker)}</strong></td><td>${esc(x.country)}</td><td style="text-align:right"><button class="danger" data-remove="${i}">Remove</button></td></tr>`).join('');
+      body.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>{batch.splice(Number(b.dataset.remove),1);renderBatch();}));
+    }
+    document.getElementById('add-company').addEventListener('click',()=>{
+      const input=document.getElementById('batch-ticker'); const ticker=input.value.trim().toUpperCase();
+      if (!ticker) { input.focus(); return; }
+      if (batch.some(x=>x.ticker===ticker)) { alert('That ticker is already in the batch.'); return; }
+      batch.push({ticker,country:document.getElementById('batch-country').value}); input.value=''; input.focus(); renderBatch();
+    });
+    document.getElementById('batch-ticker').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('add-company').click();}});
+    document.getElementById('batch-run').addEventListener('click',async()=>{
+      if (!batch.length) { alert('Add at least one company.'); return; }
+      setBusy('batch',true); document.getElementById('batch-result').classList.remove('show');
+      try {
+        const r=await api('/api/batch',{items:batch,as_of:document.getElementById('batch-date').value});
+        const counts=r.verdict_counts||{}; const box=document.getElementById('batch-result');
+        box.innerHTML=`<div class="result-head"><div><h3>Batch complete</h3><div>${r.successful} scored · ${r.failed} failed</div></div><div class="score">${r.successful}<small>completed</small></div></div><div class="result-body"><div class="metric"><span>Buy candidates</span><strong>${counts['Buy Candidate']||0}</strong></div><div class="metric"><span>Watch</span><strong>${counts['Watch']||0}</strong></div><div class="metric"><span>Reject / insufficient</span><strong>${(counts['Reject']||0)+(counts['Insufficient Data']||0)}</strong></div></div><div class="result-actions"><div class="actions"><button class="primary" data-open="${encodeURIComponent(r.workbook_path)}">Open comparison workbook</button><button class="secondary" data-open="${encodeURIComponent(r.output_directory)}">Open output folder</button></div></div>`;
+        box.classList.add('show'); wireOpenButtons(box);
+      } catch(error) { fail('batch',error); } finally { setBusy('batch',false); }
+    });
+    document.getElementById('quit').addEventListener('click',async()=>{try{await api('/api/shutdown',{});}finally{document.body.innerHTML='<main style="max-width:620px;margin:90px auto"><h1>Application closed</h1><p>You can close this browser tab.</p></main>';}});
+  </script>
+</body>
+</html>

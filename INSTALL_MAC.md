@@ -25,11 +25,15 @@ Paste this complete line into Terminal:
 curl -fsSL https://raw.githubusercontent.com/kianjindal2010/wharton-growth-scorer/main/bootstrap.sh | bash && export PATH="$HOME/.local/bin:$PATH"
 ```
 
-Then run:
+The installer creates **Wharton Growth Scorer.app** in your user Applications folder and opens it automatically. For future use, open it from Finder → Applications or search for it with Spotlight. No Terminal command is required.
+
+The command-line interface remains available for advanced use:
 
 ```bash
 wharton predict
 ```
+
+In the frontend, choose **Single company** or **Batch comparison**, add the companies, select the information date, and click the run button. The result screen can open the generated Excel workbook or output folder directly.
 
 The same installer command downloads updates and reinstalls the model later.
 

@@ -4,6 +4,8 @@ $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $venvDir = Join-Path $repoRoot ".venv"
 $launcherDir = Join-Path $env:LOCALAPPDATA "Programs\WhartonGrowthScorer\bin"
 $launcherPath = Join-Path $launcherDir "wharton.cmd"
+$startMenuShortcut = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Wharton Growth Scorer.lnk"
+$desktopShortcut = Join-Path ([Environment]::GetFolderPath("Desktop")) "Wharton Growth Scorer.lnk"
 
 Write-Host "Installing Wharton Growth Scorer..." -ForegroundColor Cyan
 
@@ -33,6 +35,20 @@ $whartonExe = Join-Path $venvDir "Scripts\wharton.exe"
 $launcher = "@echo off`r`n`"$whartonExe`" %*`r`n"
 Set-Content -LiteralPath $launcherPath -Value $launcher -Encoding Ascii
 
+$guiExe = Join-Path $venvDir "Scripts\wharton-app.exe"
+if (-not (Test-Path -LiteralPath $guiExe)) {
+    throw "The desktop application launcher was not installed."
+}
+$shell = New-Object -ComObject WScript.Shell
+foreach ($shortcutPath in @($startMenuShortcut, $desktopShortcut)) {
+    $shortcut = $shell.CreateShortcut($shortcutPath)
+    $shortcut.TargetPath = $guiExe
+    $shortcut.WorkingDirectory = $repoRoot
+    $shortcut.IconLocation = "$guiExe,0"
+    $shortcut.Description = "Wharton Growth Scorer"
+    $shortcut.Save()
+}
+
 $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
 $pathEntries = @($userPath -split ";" | Where-Object { $_ })
 if ($pathEntries -notcontains $launcherDir) {
@@ -42,5 +58,7 @@ if ($pathEntries -notcontains $launcherDir) {
 
 Write-Host ""
 Write-Host "Installation complete." -ForegroundColor Green
-Write-Host "Close and reopen PowerShell, then run: wharton predict"
+Write-Host "Open 'Wharton Growth Scorer' from the Desktop or Start menu." -ForegroundColor Green
+Write-Host "Advanced command-line access remains available with: wharton predict"
 Write-Host "Excel reports will be saved in: $HOME\Documents\Wharton Growth Scorer\output\scores"
+Start-Process -FilePath $guiExe -WorkingDirectory $repoRoot

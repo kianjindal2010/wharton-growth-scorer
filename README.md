@@ -1,6 +1,6 @@
 # Growth Sleeve Scoring Model
 
-A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve. It scores one analyst-vetted Yahoo Finance ticker at a time and deliberately does **not** determine WInS eligibility, asset allocation, or defensive-sleeve investments.
+A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve. Version 0.8.0 includes a local frontend for single-company and batch analysis. It deliberately does **not** determine WInS eligibility, asset allocation, or defensive-sleeve investments.
 
 ## Quick start
 
@@ -12,7 +12,9 @@ Paste this entire line into PowerShell. No GitHub account or Git installation is
 irm https://raw.githubusercontent.com/kianjindal2010/wharton-growth-scorer/main/bootstrap.ps1 | iex
 ```
 
-Then run from any folder:
+The installer opens the frontend automatically and creates **Wharton Growth Scorer** shortcuts on the Windows Desktop and Start menu. Future analysis requires no commands: open the shortcut and choose Single company or Batch comparison.
+
+The command-line interface remains available for advanced use:
 
 ```powershell
 wharton predict
@@ -43,7 +45,20 @@ Paste this into Terminal:
 curl -fsSL https://raw.githubusercontent.com/kianjindal2010/wharton-growth-scorer/main/bootstrap.sh | bash && export PATH="$HOME/.local/bin:$PATH"
 ```
 
-Then run `wharton predict`. Detailed macOS instructions are in [INSTALL_MAC.md](INSTALL_MAC.md).
+The installer creates **Wharton Growth Scorer.app** in the user's Applications folder and opens it automatically. Future analysis can be started from Finder or Spotlight without Terminal. The `wharton` command remains available for advanced use. Detailed macOS instructions are in [INSTALL_MAC.md](INSTALL_MAC.md).
+
+## Frontend application
+
+The frontend provides:
+
+- A single-company form with ticker, country, and information date.
+- Fully automatic detailed scorecard selection.
+- A batch builder where companies can be added and removed without creating a CSV.
+- Busy and error states while Yahoo Finance data is processed.
+- Score, verdict, confidence, model, and comparable-rank summaries.
+- Buttons that open the generated Excel report or its output folder.
+
+The interface is available only on `127.0.0.1:8765` and the scoring engine runs on the user's computer. Use **Close application** at the bottom of the page when finished.
 
 The interactive command asks for the ticker, country, as-of date, and scorecard. `auto` examines Yahoo's sector, sector key, industry, industry key, company description, and financial condition. It selects one of 28 broad or detailed models. The Excel Summary sheet records the classification confidence and exact matching reason. Experienced users can supply everything in one command:
 
@@ -126,7 +141,7 @@ Run the all-sector enhanced comparison with:
 wharton backtest --universe config/enhanced_backtest_universe.csv --start 2026-03-20 --end 2026-09-18
 ```
 
-The repository includes the [six-month backtest report](reports/Growth_Sleeve_Six_Month_Backtest_Report.docx), [company-level results](backtests/2026-03-20_to_2026-09-18/backtest_results.csv), and frozen scoring snapshots used in that test. Those results describe the earlier broad sector-aware model; version 0.7.0's 28-model architecture requires a fresh out-of-sample evaluation.
+The repository includes the [six-month backtest report](reports/Growth_Sleeve_Six_Month_Backtest_Report.docx), [company-level results](backtests/2026-03-20_to_2026-09-18/backtest_results.csv), and frozen scoring snapshots used in that test. Those results describe the earlier broad sector-aware model; the current 28-model architecture requires a fresh out-of-sample evaluation.
 
 Run the dedicated DRAM-manufacturer and TSMC diagnostic with:
 

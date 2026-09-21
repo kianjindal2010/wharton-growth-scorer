@@ -5,14 +5,16 @@
 1. Confirm that the security is eligible and tradable in WInS.
 2. Verify the exact Yahoo Finance ticker and country code.
 3. Review the latest filing as a human research check; the scoring program itself remains fully automated.
-4. Run `wharton predict` for one company or `wharton batch` for the team's weekly list.
+4. Open the **Wharton Growth Scorer** shortcut and use Single company or Batch comparison. The CLI remains available for advanced use.
 5. Review the verdict, confidence, risk gates, warnings, and Factor Breakdown sheet.
 6. Compare the company only with names scored in the same weekly cycle and scorecard.
 7. Save the workbook and source filing in the team's shared research folder.
 
 ## Interactive example
 
-Activate the installed environment once after opening PowerShell:
+The recommended workflow requires no terminal: open the installed application, enter the ticker, country, and date, then select **Run analysis**. Open the Excel report directly from the result screen.
+
+For advanced command-line use, activate the installed environment once after opening PowerShell:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1

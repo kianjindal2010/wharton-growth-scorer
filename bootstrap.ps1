@@ -21,7 +21,8 @@ try {
         $env:Path = "$launcherDir;$env:Path"
     }
     Write-Host ""
-    Write-Host "Ready. Run: wharton predict" -ForegroundColor Green
+    Write-Host "Ready. The Wharton Growth Scorer application has been opened." -ForegroundColor Green
+    Write-Host "A shortcut is available on the Desktop and in the Start menu."
 }
 finally {
     if (Test-Path -LiteralPath $temporaryRoot) {

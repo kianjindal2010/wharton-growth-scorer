@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "growth-scorer"
-version = "0.7.0"
+version = "0.8.0"
 description = "Transparent deterministic equity scoring engine for the WGY growth sleeve"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -24,8 +24,11 @@ dev = ["pytest>=8.0"]
 growth-scorer = "growth_scorer.cli:main"
 wharton = "growth_scorer.cli:main"
 
+[project.gui-scripts]
+wharton-app = "growth_scorer.app:main"
+
 [tool.setuptools.package-data]
-growth_scorer = ["scorecards.yaml"]
+growth_scorer = ["scorecards.yaml", "web/*.html"]
 
 [tool.setuptools.packages.find]
 include = ["growth_scorer*"]
