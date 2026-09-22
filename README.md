@@ -1,6 +1,6 @@
 # Growth Sleeve Scoring Model
 
-A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve. Version 0.9.0 includes a local frontend for single-company and batch analysis. It deliberately does **not** determine WInS eligibility, asset allocation, or defensive-sleeve investments.
+A deterministic, auditable stock-scoring engine for the 50% equity growth sleeve. Version 0.9.1 includes a local frontend for single-company and batch analysis. It deliberately does **not** determine WInS eligibility, asset allocation, or defensive-sleeve investments.
 
 ## Quick start
 
@@ -119,7 +119,7 @@ The CSV requires `ticker` and `country`. The `scorecard` column is optional; use
 
 Each batch creates:
 
-- `Batch_Summary.xlsx`, containing the consolidated results, within-scorecard ranks, warnings, failures, and clickable links to each detailed report.
+- `Batch_Summary.xlsx`, whose first `Consolidated` worksheet lists every submitted company as Stock, ticker, Industry, Country Code, Model Score, and Model Verdict. Failed entries remain visible with a blank score and a `Failed` verdict. The remaining worksheets contain within-scorecard ranks, warnings, failure reasons, and clickable links to each detailed report.
 - `Batch_Summary.json`, containing the same machine-readable results.
 - A `companies` folder containing the normal five-sheet Excel workbook and JSON result for every successfully scored company.
 - Frozen snapshots and score-history entries, exactly as with individual runs.

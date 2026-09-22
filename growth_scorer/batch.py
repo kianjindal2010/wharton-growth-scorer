@@ -96,8 +96,34 @@ def _header(ws, row: int = 1) -> None:
 def _write_batch_workbook(path: Path, payload: dict[str, Any]) -> None:
     workbook = Workbook()
     workbook.properties.creator = "Wharton Growth Scorer"
-    ws = workbook.active
-    ws.title = "Batch Summary"
+    consolidated = workbook.active
+    consolidated.title = "Consolidated"
+    consolidated.append(["Stock", "ticker", "Industry", "Country Code", "Model Score", "Model Verdict"])
+    for record in payload["results"]:
+        consolidated.append([
+            record["company_name"] or record["ticker"],
+            record["ticker"],
+            record["industry"],
+            record["country"],
+            record["score"],
+            record["verdict"],
+        ])
+        row = consolidated.max_row
+        consolidated.cell(row, 5).number_format = "0.00"
+        verdict_cell = consolidated.cell(row, 6)
+        if record["verdict"] == "Buy Candidate":
+            verdict_cell.font = Font(color="17785B", bold=True)
+        elif record["verdict"] in {"Reject", "Insufficient Data"}:
+            verdict_cell.font = Font(color=RED, bold=True)
+    for failure in payload["failures"]:
+        consolidated.append([
+            failure["ticker"], failure["ticker"], "", failure["country"], None, "Failed",
+        ])
+        consolidated.cell(consolidated.max_row, 6).font = Font(color=RED, bold=True)
+    _header(consolidated)
+    _fit(consolidated, 70)
+
+    ws = workbook.create_sheet("Batch Summary")
     ws.append(["Wharton Growth Scorer Batch", "Result"])
     summary_rows = [
         ("As-of date", payload["as_of"]),
@@ -237,6 +263,7 @@ def run_batch(
         result_records.append({
             "ticker": result.ticker,
             "company_name": result.company_name or "",
+            "industry": snapshot.industry or snapshot.industry_key or result.scorecard.replace("_", " ").title(),
             "country": result.country,
             "scorecard": result.scorecard,
             "classification_confidence": result.classification_confidence,

@@ -44,7 +44,7 @@ Use one shared as-of date for all companies in a weekly comparison. For a guided
 wharton batch
 ```
 
-Keep adding tickers when prompted, then press Enter at the next blank ticker prompt. The model processes every company, creates the same detailed five-sheet workbook for each one, and adds a consolidated `Batch_Summary.xlsx` workbook.
+Keep adding tickers when prompted, then press Enter at the next blank ticker prompt. The model processes every company, creates the same detailed five-sheet workbook for each successful one, and adds a `Batch_Summary.xlsx` workbook. Its first `Consolidated` worksheet lists Stock, ticker, Industry, Country Code, Model Score, and Model Verdict for every submitted company. Failed entries have a blank score and `Failed` verdict; their reasons remain on the Failures worksheet.
 
 In the frontend, paste up to 100 already formatted Yahoo tickers into one box. The list may mix markets, for example `MSFT,TCS.NS,2330.TW,000660.KS,035420.KQ`. The application infers each market from its suffix; US tickers require no suffix. Separate entries with commas or new lines, then select **Add tickers**.
 
